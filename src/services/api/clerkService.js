@@ -1,0 +1,31 @@
+import apiClient from "./apiClient";
+const unwrapList = (payload) => { const value = payload?.data ?? payload; return Array.isArray(value) ? value : value?.items ?? value?.data ?? []; };
+export const getClerkCases = async () => unwrapList((await apiClient.get("/api/cases")).data);
+export const getClerkDashboard = async () => {
+  const responses = await Promise.all([apiClient.get("/api/dashboard/summary"), apiClient.get("/api/dashboard/case-status-count"), apiClient.get("/api/dashboard/case-stage-count"), apiClient.get("/api/dashboard/advocate-wise-cases"), apiClient.get("/api/dashboard/court-wise-cases"), apiClient.get("/api/hearings/upcoming")]);
+  const unwrap = response => response.data?.data ?? response.data;
+  return { summary: unwrap(responses[0]), status: unwrap(responses[1]), stages: unwrap(responses[2]), advocate: unwrap(responses[3]), court: unwrap(responses[4]), hearings: unwrap(responses[5]) };
+};
+export const getClerkHearings = async () => unwrapList((await apiClient.get("/api/hearings")).data);
+export const getClerkClients = async () => unwrapList((await apiClient.get("/api/clients")).data);
+export const getClerkProfile = async () => { const response = await apiClient.get("/api/auth/me"); return response.data?.data ?? response.data; };
+export const updateClerkProfile = async (payload) => { const response = await apiClient.put("/api/auth/me", payload); return response.data?.data ?? response.data; };
+export const getClerkCaseDocuments = async (caseId) => unwrapList((await apiClient.get(`/api/documents/case/${Number(caseId)}`)).data);
+export const getClerkDocumentTypes = async () => unwrapList((await apiClient.get("/api/master/document-types")).data);
+export const getClerkPaymentModes = async () => unwrapList((await apiClient.get("/api/master/payment-modes")).data);
+export const uploadClerkCourtOrder = async (payload) => {
+  const form = new FormData();
+  form.append("CaseId", String(Number(payload.caseId)));
+  if (payload.hearingId != null) form.append("HearingId", String(Number(payload.hearingId)));
+  if (payload.orderType) form.append("OrderType", payload.orderType);
+  if (payload.orderDate) form.append("OrderDate", payload.orderDate);
+  if (payload.remarks) form.append("Remarks", payload.remarks);
+  form.append("File", { uri: payload.file.uri, name: payload.file.name ?? "court-order", type: payload.file.mimeType ?? "application/octet-stream" });
+  const response = await apiClient.post("/api/documents/court-order/upload", form, { headers: { "Content-Type": "multipart/form-data" } });
+  return response.data?.data ?? response.data;
+};
+export const getClerkPaymentRequests = async (params = {}) => unwrapList((await apiClient.get("/api/payment-management/requests", { params })).data);
+export const getClerkPaymentRequest = async (id) => (await apiClient.get(`/api/payment-management/requests/${Number(id)}`)).data?.data ?? (await apiClient.get(`/api/payment-management/requests/${Number(id)}`)).data;
+export const approveClerkPaymentRequest = async (id, payload = {}) => (await apiClient.put(`/api/payment-management/requests/${Number(id)}/approve`, payload)).data;
+export const rejectClerkPaymentRequest = async (id, payload = {}) => (await apiClient.put(`/api/payment-management/requests/${Number(id)}/reject`, payload)).data;
+export const createClerkPaymentRequest = async (payload) => { const response = await apiClient.post("/api/payment-management/requests", payload); return response.data?.data ?? response.data; };
