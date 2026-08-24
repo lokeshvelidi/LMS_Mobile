@@ -1,216 +1,44 @@
 import React from "react";
-
-import {
-  Pressable,
-  StyleSheet,
-  View,
-} from "react-native";
-
+import { Ionicons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, View } from "react-native";
 import AppText from "../../common/AppText";
 import HearingStatusBadge from "./HearingStatusBadge";
 
-const COLORS = {
-  navy: "#102A43",
-  secondary: "#61758A",
-  white: "#FFFDF8",
-  border: "#E6E0D4",
-  gold: "#E5B93F",
+const formatDate = (value) => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
 };
 
-const HearingCard = ({
-  hearing,
-  onPress,
-}) => {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.card,
-        pressed && styles.pressed,
-      ]}
-    >
-      <View style={styles.timeContainer}>
-        <AppText
-          size="md"
-          weight="bold"
-        >
-          {hearing.time}
-        </AppText>
+const Field = ({ label, value }) => value == null || value === "" ? null : <View style={styles.field}><AppText size="xs" color="textSecondary">{label}</AppText><AppText size="sm" weight="medium" style={styles.value}>{String(value)}</AppText></View>;
 
-        <AppText
-          size="xs"
-          color="textSecondary"
-          style={styles.duration}
-        >
-          {hearing.duration}
-        </AppText>
+const HearingCard = ({ hearing, onPress }) => (
+  <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
+    <View style={styles.icon}><Ionicons name="calendar-outline" size={24} color="#FFFFFF" /></View>
+    <View style={styles.content}>
+      <View style={styles.header}>
+        <AppText size="md" weight="bold" style={styles.purpose}>{hearing.purpose || "Hearing"}</AppText>
+        {hearing.status ? <HearingStatusBadge status={hearing.status} /> : null}
       </View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <AppText
-              size="md"
-              weight="bold"
-              numberOfLines={1}
-            >
-              {hearing.title}
-            </AppText>
-
-            <AppText
-              size="xs"
-              color="textSecondary"
-              style={styles.caseNumber}
-            >
-              {hearing.caseNumber}
-            </AppText>
-          </View>
-
-          <HearingStatusBadge
-            status={hearing.status}
-          />
-        </View>
-
-        <InfoRow
-          label="Client"
-          value={hearing.client}
-        />
-
-        <InfoRow
-          label="Court"
-          value={hearing.court}
-        />
-
-        <InfoRow
-          label="Judge"
-          value={hearing.judge}
-        />
-
-        <View style={styles.footer}>
-          <AppText
-            size="xs"
-            color="textSecondary"
-          >
-            {hearing.type}
-          </AppText>
-
-          <AppText
-            size="sm"
-            weight="semiBold"
-            style={styles.view}
-          >
-            View Details ›
-          </AppText>
-        </View>
-      </View>
-    </Pressable>
-  );
-};
-
-const InfoRow = ({
-  label,
-  value,
-}) => {
-  return (
-    <View style={styles.infoRow}>
-      <AppText
-        size="xs"
-        color="textSecondary"
-      >
-        {label}
-      </AppText>
-
-      <AppText
-        size="sm"
-        weight="medium"
-        numberOfLines={1}
-        style={styles.value}
-      >
-        {value || "-"}
-      </AppText>
+      <Field label="Hearing date" value={formatDate(hearing.hearingDate)} />
+      <Field label="Case number" value={hearing.caseNumber} />
+      <Field label="Court / Hall" value={hearing.courtHall} />
+      <View style={styles.footer}><AppText size="sm" weight="semiBold" style={styles.view}>View Details ›</AppText></View>
     </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    backgroundColor: COLORS.white,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 18,
-    padding: 14,
-    marginBottom: 10,
-  },
-
-  pressed: {
-    opacity: 0.75,
-  },
-
-  timeContainer: {
-    width: 67,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 3,
-  },
-
-  duration: {
-    marginTop: 4,
-  },
-
-  divider: {
-    width: 1,
-    backgroundColor: COLORS.border,
-    marginHorizontal: 12,
-  },
-
-  content: {
-    flex: 1,
-  },
-
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-
-  titleContainer: {
-    flex: 1,
-    marginRight: 8,
-  },
-
-  caseNumber: {
-    marginTop: 3,
-  },
-
-  infoRow: {
-    minHeight: 28,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  value: {
-    maxWidth: "68%",
-    textAlign: "right",
-  },
-
-  footer: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    marginTop: 8,
-    paddingTop: 9,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  view: {
-    color: COLORS.navy,
-  },
-});
+  </Pressable>
+);
 
 export default HearingCard;
+
+const styles = StyleSheet.create({
+  card: { flexDirection: "row", backgroundColor: "#FFFDF8", borderWidth: 1, borderColor: "#E6E0D4", borderRadius: 18, padding: 14, marginBottom: 10 },
+  pressed: { opacity: 0.75 },
+  icon: { width: 48, height: 48, borderRadius: 12, backgroundColor: "#102A43", alignItems: "center", justifyContent: "center", marginRight: 14 },
+  content: { flex: 1 },
+  header: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 },
+  purpose: { flex: 1 },
+  field: { minHeight: 28, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  value: { maxWidth: "68%", textAlign: "right" },
+  footer: { borderTopWidth: 1, borderTopColor: "#E6E0D4", marginTop: 8, paddingTop: 9, alignItems: "flex-end" },
+  view: { color: "#102A43" },
+});

@@ -30,9 +30,6 @@ const ScheduleHearingCard = ({
               {hearing.caseNo}
             </Text>
 
-            <Text style={styles.client}>
-              {hearing.client}
-            </Text>
           </View>
 
           <View
@@ -80,7 +77,6 @@ const ScheduleHearingCard = ({
           </Text>
 
           <Text style={styles.detailText}>
-            {hearing.room}
           </Text>
         </View>
       </View>

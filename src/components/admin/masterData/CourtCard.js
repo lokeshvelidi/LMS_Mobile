@@ -23,9 +23,6 @@ const CourtCard = ({
   court,
   onPress,
 }) => {
-  const isActive =
-    court.status === "Active";
-
   return (
     <Pressable
       onPress={onPress}
@@ -51,7 +48,7 @@ const CourtCard = ({
             weight="bold"
             numberOfLines={2}
           >
-            {court.name}
+            {court.courtName || "Court name unavailable"}
           </AppText>
 
           <AppText
@@ -59,48 +56,15 @@ const CourtCard = ({
             color="textSecondary"
             style={styles.code}
           >
-            {court.code}
+            {court.courtId != null ? `ID: ${court.courtId}` : null}
           </AppText>
         </View>
 
-        <View
-          style={[
-            styles.status,
-            isActive
-              ? styles.activeStatus
-              : styles.inactiveStatus,
-          ]}
-        >
-          <AppText
-            size="xs"
-            weight="semiBold"
-            style={{
-              color: isActive
-                ? COLORS.activeText
-                : COLORS.inactiveText,
-            }}
-          >
-            {court.status}
-          </AppText>
-        </View>
       </View>
 
       <View style={styles.divider} />
 
-      <InfoRow
-        label="Location"
-        value={court.location}
-      />
-
-      <InfoRow
-        label="Type"
-        value={court.type}
-      />
-
-      <InfoRow
-        label="Cases"
-        value={String(court.caseCount)}
-      />
+      <InfoRow label="Court ID" value={court.courtId} />
     </Pressable>
   );
 };
@@ -124,7 +88,7 @@ const InfoRow = ({
         numberOfLines={1}
         style={styles.value}
       >
-        {value || "-"}
+        {value != null && value !== "" ? String(value) : "Not available"}
       </AppText>
     </View>
   );

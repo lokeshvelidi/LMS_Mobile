@@ -57,7 +57,7 @@ const CourtDetailsScreen = ({
     );
   };
 
-  const handleDelete = () => Alert.alert("Delete Court", `Delete ${court.courtName || court.name}?`, [{ text: "Cancel", style: "cancel" }, { text: "Delete", style: "destructive", onPress: () => deleteAdminCourt(court.courtId ?? court.id).then(() => Alert.alert("Court Deleted", "Court deleted successfully.", [{ text: "OK", onPress: () => navigation.goBack() }])).catch((e) => Alert.alert("Delete failed", e.response?.data?.message || "Unable to delete court.")) }]);
+  const handleDelete = () => Alert.alert("Delete Court", `Delete ${court.courtName || "this court"}?`, [{ text: "Cancel", style: "cancel" }, { text: "Delete", style: "destructive", onPress: () => deleteAdminCourt(court.courtId).then(() => Alert.alert("Court Deleted", "Court deleted successfully.", [{ text: "OK", onPress: () => navigation.goBack() }])).catch((e) => Alert.alert("Delete failed", e.response?.data?.message || "Unable to delete court.")) }]);
 
   return (
     <AppScreen>
@@ -88,31 +88,16 @@ const CourtDetailsScreen = ({
             weight="bold"
             style={styles.title}
           >
-            {court.courtName || court.name}
+            {court.courtName || "Court name unavailable"}
           </AppText>
 
           <AppText
             size="sm"
             color="textSecondary"
           >
-            {court.code}
+            {court.courtId != null ? `ID: ${court.courtId}` : ""}
           </AppText>
 
-          <View
-            style={[
-              styles.status,
-              court.status === "Active"
-                ? styles.active
-                : styles.inactive,
-            ]}
-          >
-            <AppText
-              size="xs"
-              weight="semiBold"
-            >
-              {court.status}
-            </AppText>
-          </View>
         </View>
 
         <View style={styles.card}>
@@ -128,11 +113,9 @@ const CourtDetailsScreen = ({
             value={court.courtName}
           />
 
-          <InfoRow label="Judge Name" value={court.judgeName} />
-
           <InfoRow
-            label="Cases"
-            value={Array.isArray(court.cases) ? String(court.cases.length) : "—"}
+            label="Court ID"
+            value={court.courtId}
             last
           />
         </View>
@@ -189,7 +172,7 @@ const InfoRow = ({
         weight="medium"
         style={styles.value}
       >
-        {value || "-"}
+        {value != null && value !== "" ? String(value) : "Not available"}
       </AppText>
     </View>
   );

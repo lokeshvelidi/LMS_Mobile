@@ -5,91 +5,14 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Pressable,
 } from 'react-native';
 import {getClerkDashboard} from '../../../services/api/clerkService';
+import {useNavigation} from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 /* Dashboard values come from the backend. */
-const stats = [
-  {
-    title: 'OPEN CASES YOU SUPPORT',
-    value: '12',
-    type: 'blue',
-  },
-  {
-    title: 'UPCOMING HEARINGS',
-    value: '0',
-    type: 'green',
-  },
-  {
-    title: 'OUTSTANDING INVOICES',
-    value: '₹ 17,700',
-    type: 'yellow',
-  },
-  {
-    title: 'OVERDUE INVOICES',
-    value: '₹ 17,700',
-    type: 'red',
-  },
-  {
-    title: 'UNASSIGNED CLIENTS',
-    value: '1',
-    type: 'blue',
-  },
-  {
-    title: 'FIRM-WIDE COLLECTED TO DATE',
-    value: '₹ 260,000',
-    type: 'green',
-  },
-];
-
-const caseStatus = [
-  {
-    label: 'New',
-    value: 4,
-    color: '#2864E6',
-  },
-  {
-    label: 'Ready for Closure',
-    value: 1,
-    color: '#F5A000',
-  },
-  {
-    label: 'In Progress',
-    value: 4,
-    color: '#16A34A',
-  },
-  {
-    label: 'Pending',
-    value: 2,
-    color: '#E52424',
-  },
-  {
-    label: 'Adjourned',
-    value: 1,
-    color: '#64748B',
-  },
-];
-
-const billingData = [
-  {
-    label: 'Outstanding',
-    value: '₹ 17,700',
-    color: '#D7B233',
-  },
-  {
-    label: 'Overdue',
-    value: '₹ 17,700',
-    color: '#E52424',
-  },
-  {
-    label: 'Collected',
-    value: '₹ 260,000',
-    color: '#061D2C',
-  },
-];
-
 const getAccentColor = type => {
   switch (type) {
     case 'blue':
@@ -105,9 +28,10 @@ const getAccentColor = type => {
   }
 };
 
-const StatCard = ({ title, value, type }) => {
+const StatCard = ({ title, value, type, onPress }) => {
   return (
-    <View
+    <Pressable
+      onPress={onPress}
       style={[
         styles.statCard,
         {
@@ -127,12 +51,12 @@ const StatCard = ({ title, value, type }) => {
       </Text>
 
       <View style={styles.statDecoration} />
-    </View>
+    </Pressable>
   );
 };
 
-const CaseStatusChart = () => {
-  const total = caseStatus.reduce(
+const CaseStatusChart = ({items}) => {
+  const total = items.reduce(
     (sum, item) => sum + item.value,
     0,
   );
@@ -143,7 +67,7 @@ const CaseStatusChart = () => {
 
       <View style={styles.donutWrapper}>
         <View style={styles.donut}>
-          {caseStatus.map((item, index) => {
+          {items.map((item, index) => {
             const percentage = (item.value / total) * 100;
 
             return (
@@ -173,7 +97,7 @@ const CaseStatusChart = () => {
       </View>
 
       <View style={styles.legend}>
-        {caseStatus.map(item => (
+        {items.map(item => (
           <View
             style={styles.legendItem}
             key={item.label}
@@ -197,31 +121,19 @@ const CaseStatusChart = () => {
   );
 };
 
-const BillingChart = () => {
-  const maxValue = 260000;
+const BillingChart = ({items}) => {
+  const maxValue = Math.max(...items.map((item) => item.value), 1);
 
   return (
     <View style={styles.chartCard}>
       <Text style={styles.chartTitle}>Billing Overview</Text>
 
       <View style={styles.billingChart}>
-        <View style={styles.yAxis}>
-          <Text style={styles.axisText}>300,000</Text>
-          <Text style={styles.axisText}>250,000</Text>
-          <Text style={styles.axisText}>200,000</Text>
-          <Text style={styles.axisText}>150,000</Text>
-          <Text style={styles.axisText}>100,000</Text>
-          <Text style={styles.axisText}>50,000</Text>
-          <Text style={styles.axisText}>0</Text>
-        </View>
+        <View style={styles.yAxis} />
 
         <View style={styles.barsContainer}>
-          {billingData.map(item => {
-            const numericValue =
-              item.label === 'Collected'
-                ? 260000
-                : 17700;
-
+          {items.map(item => {
+            const numericValue = item.value;
             const height =
               (numericValue / maxValue) * 300;
 
@@ -253,8 +165,38 @@ const BillingChart = () => {
 };
 
 const ClerkDashboardScreen = () => {
+  const navigation = useNavigation();
   const [dashboardStats, setDashboardStats] = useState([]);
-  useEffect(() => { getClerkDashboard().then((data) => { const summary = data.summary || {}; const fields = [['OPEN CASES YOU SUPPORT', 'openCases'], ['UPCOMING HEARINGS', 'upcomingHearings'], ['OUTSTANDING INVOICES', 'outstandingInvoices'], ['OVERDUE INVOICES', 'overdueInvoices'], ['UNASSIGNED CLIENTS', 'unassignedClients'], ['FIRM-WIDE COLLECTED TO DATE', 'collectedToDate']]; setDashboardStats(fields.map(([title, key], index) => ({title, value: summary[key] != null ? String(summary[key]) : '—', type: ['blue','green','yellow','red','blue','green'][index]}))); }).catch(() => setDashboardStats([])); }, []);
+  const [caseStatusData, setCaseStatusData] = useState([]);
+  const [billingData, setBillingData] = useState([]);
+  useEffect(() => {
+    getClerkDashboard().then((data) => {
+      const summary = data.summary || {};
+      const statusRows = data.statusRows || [];
+      const pendingCases = statusRows.find((item) => String(item.status).trim().toLowerCase() === 'pending')?.count;
+      const statusTotal = statusRows.length ? statusRows.reduce((total, item) => total + Number(item.count), 0) : null;
+      const fields = [
+        ['TOTAL CLIENTS', 'totalClients'],
+        ['ACTIVE CASES', 'activeCases'],
+        ['UPCOMING HEARINGS', 'upcomingHearings'],
+      ];
+      const availableFields = fields
+        .filter(([, key]) => summary[key] != null)
+        .map(([title, key], index) => ({title, value: String(summary[key]), route: key === 'totalCases' || key === 'activeCases' ? 'ClerkCases' : key === 'totalClients' ? 'ClerkClients' : 'ClerkSchedule', type: ['blue', 'green', 'yellow', 'red'][index]}));
+      const totalCases = summary.totalCases ?? statusTotal;
+      if (totalCases != null) availableFields.splice(1, 0, {title: 'TOTAL CASES', value: String(totalCases), route: 'ClerkCases', type: 'green'});
+      if (pendingCases != null) availableFields.push({title: 'PENDING CASES', value: String(pendingCases), route: 'ClerkCases', type: 'red'});
+      setDashboardStats(availableFields);
+      const statusColors = ['#2864E6', '#F5A000', '#16A34A', '#E52424', '#64748B', '#7C3AED'];
+      setCaseStatusData((data.statusRows || []).filter((item) => Number.isFinite(item.count) && item.count >= 0).map((item, index) => ({label: item.status, value: item.count, color: statusColors[index % statusColors.length]})));
+      const cards = data.cards || {};
+      setBillingData([
+        ['Outstanding', cards.outstandingInvoices, '#D7B233'],
+        ['Overdue', cards.overdueInvoices, '#E52424'],
+        ['Collected', cards.collectedToDate, '#061D2C'],
+      ].filter(([, value]) => value != null).map(([label, value, color]) => ({label, value: Number(value), color})));
+    }).catch(() => setDashboardStats([]));
+  }, []);
   return (
     <View style={styles.container}>
       <ScrollView
@@ -278,14 +220,15 @@ const ClerkDashboardScreen = () => {
               title={item.title}
               value={item.value}
               type={item.type}
+              onPress={() => navigation.navigate(item.route)}
             />
           ))}
         </View>
 
         {/* Charts */}
         <View style={styles.chartsRow}>
-          <CaseStatusChart />
-          <BillingChart />
+          {caseStatusData.length > 0 && <CaseStatusChart items={caseStatusData} />}
+          {billingData.length > 0 && <BillingChart items={billingData} />}
         </View>
 
         {/* Upcoming hearings */}

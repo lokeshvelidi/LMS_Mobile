@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { getClientTimelineCases } from "../../../services/api/clientCasesService";
 import { getApiErrorMessage } from "../../../services/api/authService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const ClientTimelineScreen = ({ navigation }) => {
   const { width } = useWindowDimensions();
@@ -66,7 +67,7 @@ const ClientTimelineScreen = ({ navigation }) => {
     });
 
     return result;
-  }, [cases, search, sortOrder]);
+  }, [timelineCases, search, sortOrder]);
 
   const totalPages = Math.max(
     1,
@@ -113,7 +114,10 @@ const ClientTimelineScreen = ({ navigation }) => {
     >
       {/* PAGE HEADER */}
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Case Timeline</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>Case Timeline</Text>
+          <SidebarMenuButton role="client" />
+        </View>
 
         <Text style={styles.pageDescription}>
           Review the latest status, hearing movement, and payment progress for
@@ -369,6 +373,7 @@ const styles = StyleSheet.create({
   pageHeader: {
     marginBottom: 24,
   },
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
 
   pageTitle: {
     fontSize: 32,

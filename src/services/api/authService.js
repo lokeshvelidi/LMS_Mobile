@@ -2,6 +2,28 @@ import apiClient from "./apiClient";
 import { getUserRole, parseAuthResponse } from "./authSession";
 import { getAuthSession } from "../storage/authStorage";
 
+export const getStaffProfile = async () => {
+  const response = await apiClient.get("/api/auth/me");
+  return response.data?.data ?? response.data;
+};
+
+export const updateStaffProfile = async (payload) => {
+  const response = await apiClient.put("/api/auth/me", payload);
+  return response.data?.data ?? response.data;
+};
+
+export const uploadStaffProfilePhoto = async (file) => {
+  const form = new FormData();
+  form.append("file", { uri: file.uri, name: file.fileName || "profile-photo.jpg", type: file.mimeType || "image/jpeg" });
+  const response = await apiClient.post("/api/auth/me/photo", form, { headers: { "Content-Type": "multipart/form-data" } });
+  return response.data?.data ?? response.data;
+};
+
+export const changeStaffPassword = async (oldPassword, newPassword) => {
+  const response = await apiClient.post("/api/auth/change-password", { oldPassword, newPassword });
+  return response.data?.data ?? response.data;
+};
+
 const AUTH_REJECTION_STATUSES = [401, 403, 404];
 
 export const getApiErrorMessage = (error, fallback = "Something went wrong. Please try again.") => {

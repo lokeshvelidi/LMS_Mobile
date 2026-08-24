@@ -17,6 +17,8 @@ import MarkReadyForClosureScreen from "../../screens/lawyer/caseClosure/MarkRead
 import DocumentsScreen from "../../screens/documents/DocumentsScreen";
 import UploadDocumentScreen from "../../screens/documents/UploadDocumentScreen";
 import DocumentDetailsScreen from "../../screens/documents/DocumentDetailsScreen";
+import EditLawyerProfileScreen from "../../screens/lawyer/profile/EditLawyerProfileScreen";
+import ChangeLawyerPasswordScreen from "../../screens/lawyer/profile/ChangeLawyerPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +38,8 @@ const screens = [
   ["Documents", DocumentsScreen],
   ["UploadDocument", UploadDocumentScreen],
   ["DocumentDetails", DocumentDetailsScreen],
+  ["EditLawyerProfile", EditLawyerProfileScreen],
+  ["ChangeLawyerPassword", ChangeLawyerPasswordScreen],
 ];
 
 const LawyerNavigator = () => (

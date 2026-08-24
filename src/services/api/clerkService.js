@@ -1,15 +1,36 @@
 import apiClient from "./apiClient";
 const unwrapList = (payload) => { const value = payload?.data ?? payload; return Array.isArray(value) ? value : value?.items ?? value?.data ?? []; };
 export const getClerkCases = async () => unwrapList((await apiClient.get("/api/cases")).data);
+const assignmentResult = (response) => ({ raw: response.data, data: response.data?.data ?? response.data });
+export const getClerkCaseAssignments = async (caseId) => {
+  if (caseId == null) throw new Error("A valid case ID is required.");
+  return assignmentResult(await apiClient.get(`/api/case-assignments/case/${Number(caseId)}`));
+};
+export const getClerkAdvocateAssignments = async (advocateId) => {
+  if (advocateId == null) throw new Error("A valid advocate ID is required.");
+  return assignmentResult(await apiClient.get(`/api/case-assignments/advocate/${Number(advocateId)}`));
+};
+const unwrapPayload = (response) => response?.data?.data ?? response?.data;
+const listFromResponse = (response) => { const payload = unwrapPayload(response); if (Array.isArray(payload)) return payload; if (Array.isArray(payload?.items)) return payload.items; throw new Error("Unsupported dashboard response."); };
+const normalizeCaseStatusRows = (response) => listFromResponse(response).filter((item) => item?.status != null && item?.count != null).map((item) => ({ status: String(item.status), count: Number(item.count) }));
+const normalizeInvoices = (response) => listFromResponse(response).filter((item) => item?.invoiceId != null).map((item) => ({ status: item.status == null ? null : String(item.status), dueDate: item.dueDate ?? null, outstandingAmount: item.outstandingAmount == null ? null : Number(item.outstandingAmount) }));
+const normalizeTransactions = (response) => listFromResponse(response).filter((item) => item?.paymentId != null && item?.amount != null).map((item) => ({ amount: Number(item.amount) }));
+const countOpenCases = (statusRows, cases) => { const openRow = statusRows.find((item) => /^(open|open case|opened)$/i.test(item.status.trim())); if (openRow && Number.isFinite(openRow.count)) return openRow.count; const rows = Array.isArray(cases) ? cases.filter((item) => item?.status != null) : []; return rows.length ? rows.filter((item) => /^(open|opened)$/i.test(String(item.status).trim())).length : null; };
+const aggregateInvoiceValues = (invoices) => { if (!invoices.length || invoices.some((item) => item.outstandingAmount == null)) return { outstanding: null, overdue: null }; const outstanding = invoices.reduce((total, item) => total + (Number.isFinite(item.outstandingAmount) ? item.outstandingAmount : 0), 0); const overdue = invoices.reduce((total, item) => { const explicit = item.status?.trim().toLowerCase() === "overdue"; const due = item.dueDate ? new Date(item.dueDate).getTime() : NaN; return total + (explicit || (Number.isFinite(due) && due < Date.now() && item.outstandingAmount > 0) ? item.outstandingAmount : 0); }, 0); return { outstanding, overdue }; };
 export const getClerkDashboard = async () => {
-  const responses = await Promise.all([apiClient.get("/api/dashboard/summary"), apiClient.get("/api/dashboard/case-status-count"), apiClient.get("/api/dashboard/case-stage-count"), apiClient.get("/api/dashboard/advocate-wise-cases"), apiClient.get("/api/dashboard/court-wise-cases"), apiClient.get("/api/hearings/upcoming")]);
-  const unwrap = response => response.data?.data ?? response.data;
-  return { summary: unwrap(responses[0]), status: unwrap(responses[1]), stages: unwrap(responses[2]), advocate: unwrap(responses[3]), court: unwrap(responses[4]), hearings: unwrap(responses[5]) };
+  const results = await Promise.allSettled([apiClient.get("/api/dashboard/summary"), apiClient.get("/api/dashboard/case-status-count"), apiClient.get("/api/dashboard/case-stage-count"), apiClient.get("/api/dashboard/advocate-wise-cases"), apiClient.get("/api/dashboard/court-wise-cases"), apiClient.get("/api/hearings/upcoming"), apiClient.get("/api/cases"), apiClient.get("/api/clients"), apiClient.get("/api/payment-management/invoices", { params: { Page: 1, PageSize: 100 } }), apiClient.get("/api/payment-management/transactions", { params: { Page: 1, PageSize: 100 } })]);
+  const value = (index) => results[index].status === "fulfilled" ? unwrapPayload(results[index].value) : null;
+  const statusRows = results[1].status === "fulfilled" ? normalizeCaseStatusRows(results[1].value) : [];
+  const cases = results[6].status === "fulfilled" ? listFromResponse(results[6].value) : null;
+  const invoiceTotals = aggregateInvoiceValues(results[8].status === "fulfilled" ? normalizeInvoices(results[8].value) : []);
+  const transactions = results[9].status === "fulfilled" ? normalizeTransactions(results[9].value) : [];
+  return { summary: value(0), status: value(1), statusRows, stages: value(2), advocate: value(3), court: value(4), hearings: value(5), cards: { openCases: countOpenCases(statusRows, cases), outstandingInvoices: invoiceTotals.outstanding, overdueInvoices: invoiceTotals.overdue, collectedToDate: transactions.length ? transactions.reduce((total, item) => total + item.amount, 0) : null, unassignedClients: null } };
 };
 export const getClerkHearings = async () => unwrapList((await apiClient.get("/api/hearings")).data);
 export const getClerkClients = async () => unwrapList((await apiClient.get("/api/clients")).data);
 export const getClerkProfile = async () => { const response = await apiClient.get("/api/auth/me"); return response.data?.data ?? response.data; };
 export const updateClerkProfile = async (payload) => { const response = await apiClient.put("/api/auth/me", payload); return response.data?.data ?? response.data; };
+export const changeClerkPassword = async (oldPassword, newPassword) => { const response = await apiClient.post("/api/auth/change-password", { oldPassword, newPassword }); return response.data?.data ?? response.data; };
 export const getClerkCaseDocuments = async (caseId) => unwrapList((await apiClient.get(`/api/documents/case/${Number(caseId)}`)).data);
 export const getClerkDocumentTypes = async () => unwrapList((await apiClient.get("/api/master/document-types")).data);
 export const getClerkPaymentModes = async () => unwrapList((await apiClient.get("/api/master/payment-modes")).data);

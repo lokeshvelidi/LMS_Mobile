@@ -15,6 +15,7 @@ import CalendarDay from '../../../components/clerk/hearingCalendar/CalendarDay';
 import HearingCalendarItem from '../../../components/clerk/hearingCalendar/HearingCalendarItem';
 import {getClerkHearings} from '../../../services/api/clerkService';
 
+/* Legacy sample records intentionally disabled. The screen uses API data only.
 const HEARINGS = [
   {
     id: '1',
@@ -100,7 +101,7 @@ const HEARINGS = [
     status: 'Adjourned',
     color: '#F8E5C8',
   },
-];
+]; */
 
 const MONTHS = [
   'January',
@@ -165,7 +166,17 @@ const ClerkHearingCalendarScreen = () => {
   const [selectedDate, setSelectedDate] =
     useState(null);
   const [hearings, setHearings] = useState([]);
-  useEffect(() => { getClerkHearings().then((items) => setHearings(items.map((item) => { const date = new Date(item.hearingDate); return {id: item.hearingId, date: date.getDate(), month: date.getMonth(), year: date.getFullYear(), day: WEEK_DAYS[date.getDay()], time: date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}), caseNo: item.caseNumber ?? '-', client: item.client?.name ?? item.clientName ?? '-', court: item.courtHall ?? '-', type: item.purpose ?? '-', status: item.status ?? '-', color: '#E1EAF8'}; }))).catch(() => setHearings([])); }, []);
+  useEffect(() => {
+    getClerkHearings()
+      .then((items) => setHearings(items.flatMap((item) => {
+        const timestamp = item.hearingDate ? new Date(item.hearingDate) : null;
+        if (!timestamp || Number.isNaN(timestamp.getTime())) return [];
+        const purpose = item.purpose ?? '';
+        const icon = purpose.toLowerCase().includes('meeting') ? 'people-outline' : purpose.toLowerCase().includes('mediation') ? 'git-branch-outline' : 'calendar-outline';
+        return [{ id: item.hearingId, caseId: item.caseId, date: timestamp.getDate(), month: timestamp.getMonth(), year: timestamp.getFullYear(), day: WEEK_DAYS[timestamp.getDay()], time: timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), caseNo: item.caseNumber ?? '-', client: item.client?.name ?? '-', court: item.courtHall ?? '-', type: purpose || '-', status: item.status ?? '-', icon, color: '#E1EAF8' }];
+      })))
+      .catch(() => setHearings([]));
+  }, []);
 
   const monthName =
     MONTHS[currentMonth];

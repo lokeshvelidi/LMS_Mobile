@@ -15,6 +15,7 @@ import {
   getClientInvoices,
   getClientPayments,
 } from "../../../services/api/clientBillingService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 import { getApiErrorMessage } from "../../../services/api/authService";
 
 const hasStatus = (value, expected) => (
@@ -176,7 +177,10 @@ const ClientBillingScreen = () => {
       ========================= */}
 
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Billing</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>Billing</Text>
+          <SidebarMenuButton role="client" />
+        </View>
 
         <Text style={styles.pageDescription}>
           View invoices, payments, and outstanding balances
@@ -1038,6 +1042,7 @@ const ClientBillingScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   screen: {
     flex: 1,
     backgroundColor: "transparent",

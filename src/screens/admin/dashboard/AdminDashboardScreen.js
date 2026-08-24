@@ -16,6 +16,8 @@ import TopAdvocatesCard from "../../../components/admin/dashboard/TopAdvocatesCa
 import UpcomingHearingCard from "../../../components/admin/dashboard/UpcomingHearingCard";
 import { getAdminDashboard } from "../../../services/api/adminService";
 import { getAdminUpcomingHearings } from "../../../services/api/adminHearingsService";
+import { getAdminReport } from "../../../services/api/adminReportsService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const COLORS = {
   background: "#F5F2EA",
@@ -32,8 +34,10 @@ const AdminDashboardScreen = ({
 }) => {
   const [dashboard, setDashboard] = useState(null);
   const [upcomingHearings, setUpcomingHearings] = useState([]);
-  useEffect(() => { getAdminDashboard().then(setDashboard).catch(() => setDashboard(null)); getAdminUpcomingHearings().then(setUpcomingHearings).catch(() => setUpcomingHearings([])); }, []);
+  const [caseTypeCounts, setCaseTypeCounts] = useState(null);
+  useEffect(() => { getAdminDashboard().then(setDashboard).catch(() => setDashboard(null)); getAdminUpcomingHearings().then(setUpcomingHearings).catch(() => setUpcomingHearings([])); getAdminReport("cases").then((response) => { const payload = response?.result ?? response; const rows = Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? []; const counts = rows.reduce((result, item) => { const type = String(item?.caseType || "").trim().toLowerCase(); if (type === "civil" || type === "criminal") result[type] += 1; return result; }, { civil: 0, criminal: 0 }); setCaseTypeCounts(counts); }).catch(() => setCaseTypeCounts(null)); }, []);
   const summary = dashboard?.summary && typeof dashboard.summary === "object" ? dashboard.summary : {};
+  const caseTypeValue = (type) => caseTypeCounts ? String(caseTypeCounts[type]) : "—";
   const value = (...keys) => { const key = keys.find((item) => summary[item] != null); return key ? String(summary[key]) : "—"; };
   return (
     <AppScreen>
@@ -47,6 +51,8 @@ const AdminDashboardScreen = ({
         <AppHeader
           title="Dashboard"
           subtitle="Welcome back! Here's what's happening today."
+          compact
+          rightElement={<SidebarMenuButton role="admin" />}
         />
 
         {/* Statistics */}
@@ -74,22 +80,25 @@ const AdminDashboardScreen = ({
               icon="C"
               accent={COLORS.blue}
               description="Registered clients"
+              onPress={() => navigation.navigate("Clients")}
             />
 
             <AdminStatCard
               title="Civil Cases"
-              value={value("civilCases", "civilCaseCount")}
+              value={caseTypeValue("civil")}
               icon="⚖"
               accent={COLORS.gold}
               description="Active civil cases"
+              onPress={() => navigation.navigate("Cases")}
             />
 
             <AdminStatCard
               title="Criminal Cases"
-              value={value("criminalCases", "criminalCaseCount")}
+              value={caseTypeValue("criminal")}
               icon="§"
               accent={COLORS.red}
               description="Active criminal cases"
+              onPress={() => navigation.navigate("Cases")}
             />
 
             <AdminStatCard
@@ -98,6 +107,7 @@ const AdminDashboardScreen = ({
               icon="D"
               accent={COLORS.green}
               description="Scheduled today"
+              onPress={() => navigation.navigate("Hearings")}
             />
 
             <AdminStatCard
@@ -106,6 +116,7 @@ const AdminDashboardScreen = ({
               icon="P"
               accent={COLORS.gold}
               description="Awaiting action"
+              onPress={() => navigation.navigate("Cases")}
             />
 
             <AdminStatCard
@@ -114,6 +125,7 @@ const AdminDashboardScreen = ({
               icon="✓"
               accent={COLORS.green}
               description="Successfully closed"
+              onPress={() => navigation.navigate("Cases")}
             />
 
             <AdminStatCard
@@ -122,6 +134,7 @@ const AdminDashboardScreen = ({
               icon="H"
               accent={COLORS.blue}
               description="Upcoming schedule"
+              onPress={() => navigation.navigate("Hearings")}
             />
 
             <AdminStatCard
@@ -130,6 +143,7 @@ const AdminDashboardScreen = ({
               icon="₹"
               accent={COLORS.red}
               description="Outstanding amount"
+              onPress={() => navigation.navigate("Reports")}
             />
           </View>
         </View>

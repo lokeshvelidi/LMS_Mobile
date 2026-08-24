@@ -11,8 +11,9 @@ import {
 } from "react-native";
 import { getClientHearings } from "../../../services/api/clientHearingsService";
 import { getApiErrorMessage } from "../../../services/api/authService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
-const ClientHearingScheduleScreen = () => {
+const ClientHearingScheduleScreen = ({navigation}) => {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
@@ -109,7 +110,7 @@ const ClientHearingScheduleScreen = () => {
   };
 
   const handleView = (hearing) => {
-    console.log("View hearing:", hearing);
+    navigation?.navigate("ClientHearingDetails", {hearing});
   };
 
   return (
@@ -120,7 +121,10 @@ const ClientHearingScheduleScreen = () => {
     >
       {/* PAGE HEADER */}
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Hearing Schedule</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>Hearing Schedule</Text>
+          <SidebarMenuButton role="client" />
+        </View>
 
         <Text style={styles.pageDescription}>
           View your upcoming hearings, court details, and hearing purposes.
@@ -234,10 +238,6 @@ const ClientHearingScheduleScreen = () => {
                   {hearing.purpose}
                 </Text>
 
-                <Text style={styles.caseName}>
-                  {hearing.caseName}
-                </Text>
-
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>
                     Docket
@@ -268,15 +268,6 @@ const ClientHearingScheduleScreen = () => {
                   </Text>
                 </View>
 
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>
-                    Lawyer
-                  </Text>
-
-                  <Text style={styles.detailValue}>
-                    {hearing.lawyer}
-                  </Text>
-                </View>
               </View>
 
               {/* RIGHT SIDE */}
@@ -361,6 +352,7 @@ const ClientHearingScheduleScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   screen: {
     flex: 1,
     backgroundColor: "transparent",

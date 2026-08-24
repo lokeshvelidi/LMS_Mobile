@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,11 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
+import { getClientCases } from "../../../services/api/clientCasesService";
+import { getApiErrorMessage } from "../../../services/api/authService";
 
-const ClientClosedCasesScreen = () => {
+const ClientClosedCasesScreen = ({navigation}) => {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
@@ -18,27 +21,28 @@ const ClientClosedCasesScreen = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(1);
+  const [closedCases, setClosedCases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const closedCases = [
-    {
-      id: "CLOSED-001",
-      docketNo: "CIV-2025-014",
-      caseName: "Ravi Kumar vs. XYZ Properties",
-      lawyer: "Sowmya Advocate",
-      closedDate: "12 Jun 2026",
-      closureReason: "Case Resolved",
-      finalStatus: "Closed",
-    },
-    {
-      id: "CLOSED-002",
-      docketNo: "CIV-2025-009",
-      caseName: "Anil Kumar vs. ABC Traders",
-      lawyer: "Sowmya Advocate",
-      closedDate: "28 Mar 2026",
-      closureReason: "Settlement",
-      finalStatus: "Closed",
-    },
-  ];
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setError("");
+    getClientCases({ page: 1, pageSize: 100, search: "", sortBy: "docket", sortOrder: "asc" })
+      .then((result) => {
+        if (!active) return;
+        setClosedCases(result.items.filter((item) => ["CLOSED", "COMPLETED"].includes(String(item.status).toUpperCase())));
+      })
+      .catch((requestError) => {
+        if (!active) return;
+        setClosedCases([]);
+        setError(getApiErrorMessage(requestError, "Unable to load closed cases."));
+      })
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, [reloadKey]);
 
   const filteredCases = useMemo(() => {
     let result = [...closedCases];
@@ -128,7 +132,7 @@ const ClientClosedCasesScreen = () => {
   };
 
   const handleView = (caseItem) => {
-    console.log("View closed case:", caseItem);
+    navigation.navigate("ClientCaseDetails", {caseId: caseItem.caseId});
   };
 
   return (
@@ -142,9 +146,10 @@ const ClientClosedCasesScreen = () => {
       ========================= */}
 
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>
-          Closed Cases
-        </Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>Closed Cases</Text>
+          <SidebarMenuButton role="client" />
+        </View>
 
         <Text style={styles.pageDescription}>
           View your previously completed and closed cases.
@@ -299,7 +304,11 @@ const ClientClosedCasesScreen = () => {
             CASE TABLE
         ========================= */}
 
-        {visibleCases.length === 0 ? (
+        {loading ? (
+          <View style={styles.emptyState}><Text style={styles.emptyDescription}>Loading closed cases...</Text></View>
+        ) : error ? (
+          <View style={styles.emptyState}><Text style={styles.emptyDescription}>{error}</Text><Pressable style={styles.mobileViewButton} onPress={() => setReloadKey((value) => value + 1)}><Text style={styles.mobileViewButtonText}>Retry</Text></Pressable></View>
+        ) : visibleCases.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
               <Text style={styles.emptyIconText}>
@@ -648,6 +657,7 @@ const ClientClosedCasesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   screen: {
     flex: 1,
     backgroundColor: "transparent",

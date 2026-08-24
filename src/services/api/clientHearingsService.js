@@ -7,7 +7,7 @@ const formatDateParts = (value) => {
   }
   return {
     date: date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-    time: date.getHours() || date.getMinutes()
+    time: /T\d{2}:\d{2}|\s\d{2}:\d{2}/.test(String(value))
       ? date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
       : "Not provided",
     timestamp: date.getTime(),

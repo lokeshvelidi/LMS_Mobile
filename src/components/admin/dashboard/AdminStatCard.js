@@ -3,6 +3,7 @@ import React from "react";
 
 import {
   StyleSheet,
+  Pressable,
   View,
 } from "react-native";
 
@@ -22,9 +23,10 @@ const AdminStatCard = ({
   icon,
   description,
   accent = COLORS.gold,
+  onPress,
 }) => {
-  return (
-    <View style={styles.card}>
+  const content = (
+    <>
       <View
         style={[
           styles.iconContainer,
@@ -71,8 +73,9 @@ const AdminStatCard = ({
           {description}
         </AppText>
       ) : null}
-    </View>
+    </>
   );
+  return onPress ? <Pressable onPress={onPress} style={styles.card}>{content}</Pressable> : <View style={styles.card}>{content}</View>;
 };
 
 const styles = StyleSheet.create({

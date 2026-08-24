@@ -22,8 +22,19 @@ import AddCourtScreen from "../../screens/admin/masterData/AddCourtScreen";
 import CourtDetailsScreen from "../../screens/admin/masterData/CourtDetailsScreen";
 import EditCourtScreen from "../../screens/admin/masterData/EditCourtScreen";
 import ReportsScreen from "../../screens/admin/reports/ReportsScreen";
-import AuditLogsScreen from "../../screens/admin/audit/AuditLogsScreen";
 import SettingsScreen from "../../screens/admin/settings/SettingsScreen";
+import ProfileSettingsScreen from "../../screens/admin/settings/ProfileSettingsScreen";
+import EditProfileScreen from "../../screens/admin/settings/EditProfileScreen";
+import ChangePasswordScreen from "../../screens/admin/settings/ChangePasswordScreen";
+import SecurityScreen from "../../screens/admin/settings/SecurityScreen";
+import LanguageScreen from "../../screens/admin/settings/LanguageScreen";
+import AppearanceScreen from "../../screens/admin/settings/AppearanceScreen";
+import DateTimeScreen from "../../screens/admin/settings/DateTimeScreen";
+import PrivacyPolicyScreen from "../../screens/admin/settings/PrivacyPolicyScreen";
+import TermsConditionsScreen from "../../screens/admin/settings/TermsConditionsScreen";
+import DataStorageScreen from "../../screens/admin/settings/DataStorageScreen";
+import HelpSupportScreen from "../../screens/admin/settings/HelpSupportScreen";
+import AboutScreen from "../../screens/admin/settings/AboutScreen";
 import AdminAdvocatesScreen from "../../screens/admin/advocates/AdvocatesScreen";
 import AdminAdvocateDetailsScreen from "../../screens/admin/advocates/AdvocateDetailsScreen";
 import AdminAddAdvocateScreen from "../../screens/admin/advocates/AddAdvocateScreen";
@@ -56,8 +67,19 @@ const screens = [
   ["CourtDetails", CourtDetailsScreen],
   ["EditCourt", EditCourtScreen],
   ["Reports", ReportsScreen],
-  ["AuditLogs", AuditLogsScreen],
   ["Settings", SettingsScreen],
+  ["AdminProfileSettings", ProfileSettingsScreen],
+  ["AdminEditProfile", EditProfileScreen],
+  ["AdminChangePassword", ChangePasswordScreen],
+  ["AdminSecurity", SecurityScreen],
+  ["AdminLanguage", LanguageScreen],
+  ["AdminAppearance", AppearanceScreen],
+  ["AdminDateTime", DateTimeScreen],
+  ["AdminPrivacyPolicy", PrivacyPolicyScreen],
+  ["AdminTermsConditions", TermsConditionsScreen],
+  ["AdminDataStorage", DataStorageScreen],
+  ["AdminHelpSupport", HelpSupportScreen],
+  ["AdminAbout", AboutScreen],
   ["AdminClients", AdminClientsScreen],
   ["AdminClientDetails", AdminClientDetailsScreen],
   ["AdminAddClient", AdminAddClientScreen],

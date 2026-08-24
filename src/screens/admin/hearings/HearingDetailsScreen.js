@@ -15,6 +15,8 @@ import AppText from "../../../components/common/AppText";
 import HearingStatusBadge from "../../../components/admin/hearings/HearingStatusBadge";
 import { deleteAdminHearing, getAdminHearing } from "../../../services/api/adminHearingsService";
 
+const formatDate = (value) => { if (!value) return null; const date = new Date(value); return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }); };
+
 const COLORS = {
   background: "#F5F2EA",
   navy: "#102A43",
@@ -101,7 +103,7 @@ const HearingDetailsScreen = ({
               weight="bold"
               style={styles.iconText}
             >
-              {hearing.dateNumber}
+              {hearing.hearingDate ? new Date(hearing.hearingDate).getDate() : ""}
             </AppText>
 
             <AppText
@@ -109,7 +111,7 @@ const HearingDetailsScreen = ({
               weight="bold"
               style={styles.month}
             >
-              {hearing.month}
+              {hearing.hearingDate ? new Date(hearing.hearingDate).toLocaleString("en", { month: "short" }).toUpperCase() : ""}
             </AppText>
           </View>
 
@@ -118,14 +120,14 @@ const HearingDetailsScreen = ({
             weight="bold"
             style={styles.title}
           >
-            {hearing.title}
+            {hearing.purpose || "Hearing"}
           </AppText>
 
           <AppText
             size="sm"
             color="textSecondary"
           >
-            {hearing.caseNumber}
+            {hearing.caseNumber || "Not available"}
           </AppText>
 
           <View style={styles.statusContainer}>
@@ -145,23 +147,10 @@ const HearingDetailsScreen = ({
 
           <InfoRow
             label="Date"
-            value={hearing.date}
+            value={formatDate(hearing.hearingDate)}
           />
 
-          <InfoRow
-            label="Time"
-            value={hearing.time}
-          />
-
-          <InfoRow
-            label="Duration"
-            value={hearing.duration}
-          />
-
-          <InfoRow
-            label="Type"
-            value={hearing.type}
-          />
+          <InfoRow label="Purpose" value={hearing.purpose} />
 
           <InfoRow
             label="Case Number"
@@ -169,18 +158,13 @@ const HearingDetailsScreen = ({
           />
 
           <InfoRow
-            label="Client"
-            value={hearing.client}
-          />
-
-          <InfoRow
             label="Court"
-            value={hearing.court}
+            value={hearing.courtHall}
           />
 
           <InfoRow
-            label="Judge"
-            value={hearing.judge}
+            label="Status"
+            value={hearing.status}
             last
           />
         </View>

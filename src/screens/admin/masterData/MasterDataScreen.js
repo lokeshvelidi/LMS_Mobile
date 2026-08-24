@@ -29,7 +29,7 @@ const MASTER_DATA = [
   },
 
   {
-    id: "caseTypes",
+    id: "caseTypes-disabled",
     title: "Case Types",
     description:
       "Manage civil, criminal, family and other case types.",
@@ -38,7 +38,7 @@ const MASTER_DATA = [
   },
 
   {
-    id: "practiceAreas",
+    id: "practiceAreas-disabled",
     title: "Practice Areas",
     description:
       "Manage the firm's practice areas.",
@@ -64,7 +64,7 @@ const MasterDataScreen = ({
   return (
     <AppScreen>
       <FlatList
-        data={MASTER_DATA}
+        data={MASTER_DATA.filter((item) => item.route)}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={

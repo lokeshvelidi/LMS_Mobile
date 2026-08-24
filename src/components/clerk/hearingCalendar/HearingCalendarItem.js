@@ -1,4 +1,5 @@
 import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -15,6 +16,10 @@ const HearingCalendarItem = ({
       activeOpacity={0.85}
       style={styles.container}
       onPress={() => onPress?.(hearing)}>
+      <View style={styles.iconContainer}>
+        <Ionicons name={hearing.icon || 'calendar-outline'} size={24} color="#FFFFFF" />
+      </View>
+
       <View style={styles.timeContainer}>
         <Text style={styles.time}>
           {hearing.time}
@@ -91,6 +96,16 @@ const styles = StyleSheet.create({
 
   timeContainer: {
     width: 75,
+  },
+
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#102A43',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
 
   time: {

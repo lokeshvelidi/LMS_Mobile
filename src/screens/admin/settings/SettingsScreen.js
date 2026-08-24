@@ -26,8 +26,7 @@ const COLORS = {
   border: "#DED9CE",
 };
 
-const SettingsScreen = ({
-}) => {
+const SettingsScreen = ({ navigation }) => {
   const { logout } = useAuth();
   const [
     notifications,
@@ -49,14 +48,7 @@ const SettingsScreen = ({
     setCaseUpdates,
   ] = useState(true);
 
-  const handleComingSoon = (
-    title
-  ) => {
-    Alert.alert(
-      title,
-      "This section will be connected with the backend later."
-    );
-  };
+  const open = (route) => navigation.navigate(route);
 
   const handleLogout = () => {
     Alert.alert(
@@ -97,9 +89,7 @@ const SettingsScreen = ({
               subtitle="Manage your personal information"
               icon="P"
               onPress={() =>
-                handleComingSoon(
-                  "Profile"
-                )
+                open("AdminProfileSettings")
               }
             />
 
@@ -108,9 +98,7 @@ const SettingsScreen = ({
               subtitle="Update your account password"
               icon="🔒"
               onPress={() =>
-                handleComingSoon(
-                  "Change Password"
-                )
+                open("AdminChangePassword")
               }
             />
 
@@ -119,13 +107,11 @@ const SettingsScreen = ({
               subtitle="Manage account security"
               icon="S"
               onPress={() =>
-                handleComingSoon(
-                  "Security"
-                )
+                open("AdminSecurity")
               }
             />
           </SettingsSection>
-
+{/* 
           <SettingsSection title="Application">
             <SettingsRow
               title="Language"
@@ -133,9 +119,7 @@ const SettingsScreen = ({
               icon="A"
               rightText="English"
               onPress={() =>
-                handleComingSoon(
-                  "Language"
-                )
+                open("AdminLanguage")
               }
             />
 
@@ -145,9 +129,7 @@ const SettingsScreen = ({
               icon="◐"
               rightText="System"
               onPress={() =>
-                handleComingSoon(
-                  "Appearance"
-                )
+                open("AdminAppearance")
               }
             />
 
@@ -156,14 +138,12 @@ const SettingsScreen = ({
               subtitle="Manage date and time preferences"
               icon="T"
               onPress={() =>
-                handleComingSoon(
-                  "Date & Time"
-                )
+                open("AdminDateTime")
               }
             />
-          </SettingsSection>
+          </SettingsSection> */}
 
-          <SettingsSection title="Notifications">
+          {/* <SettingsSection title="Notifications">
             <SettingsToggleRow
               title="Push Notifications"
               subtitle="Receive notifications on your device"
@@ -203,7 +183,7 @@ const SettingsScreen = ({
                 setCaseUpdates
               }
             />
-          </SettingsSection>
+          </SettingsSection> */}
 
           <SettingsSection title="Data & Privacy">
             <SettingsRow
@@ -211,9 +191,7 @@ const SettingsScreen = ({
               subtitle="View privacy policy"
               icon="P"
               onPress={() =>
-                handleComingSoon(
-                  "Privacy Policy"
-                )
+                open("AdminPrivacyPolicy")
               }
             />
 
@@ -222,9 +200,7 @@ const SettingsScreen = ({
               subtitle="View terms and conditions"
               icon="T"
               onPress={() =>
-                handleComingSoon(
-                  "Terms & Conditions"
-                )
+                open("AdminTermsConditions")
               }
             />
 
@@ -232,11 +208,7 @@ const SettingsScreen = ({
               title="Data & Storage"
               subtitle="Manage application data"
               icon="D"
-              onPress={() =>
-                handleComingSoon(
-                  "Data & Storage"
-                )
-              }
+              onPress={() => open("AdminDataStorage")}
             />
           </SettingsSection>
 
@@ -246,9 +218,7 @@ const SettingsScreen = ({
               subtitle="Get help with the application"
               icon="?"
               onPress={() =>
-                handleComingSoon(
-                  "Help & Support"
-                )
+                open("AdminHelpSupport")
               }
             />
 
@@ -257,9 +227,7 @@ const SettingsScreen = ({
               subtitle="Application information"
               icon="i"
               onPress={() =>
-                handleComingSoon(
-                  "About"
-                )
+                open("AdminAbout")
               }
             />
           </SettingsSection>

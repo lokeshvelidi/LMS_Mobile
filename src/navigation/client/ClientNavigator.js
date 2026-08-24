@@ -8,6 +8,7 @@ import ClientDocumentsScreen from "../../screens/clients/documents/ClientDocumen
 import ClientBillingScreen from "../../screens/clients/billing/ClientBillingScreen";
 import ClientClosedCasesScreen from "../../screens/clients/closedCases/ClientClosedCasesScreen";
 import ClientCaseDetailsScreen from "../../screens/clients/myCases/ClientCaseDetailsScreen";
+import ClientHearingDetailsScreen from "../../screens/clients/hearingSchedule/ClientHearingDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,10 @@ const ClientNavigator = () => {
       <Stack.Screen
         name="ClientCaseDetails"
         component={ClientCaseDetailsScreen}
+      />
+      <Stack.Screen
+        name="ClientHearingDetails"
+        component={ClientHearingDetailsScreen}
       />
     </Stack.Navigator>
   );

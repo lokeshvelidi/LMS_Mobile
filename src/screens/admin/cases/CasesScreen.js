@@ -14,6 +14,7 @@ import {
 
 import AppScreen from "../../../components/layout/AppScreen";
 import AppHeader from "../../../components/layout/AppHeader";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 import AppText from "../../../components/common/AppText";
 
 import CaseCard from "../../../components/admin/cases/CaseCard";
@@ -219,6 +220,7 @@ const CasesScreen = ({
               title="Cases"
               subtitle="Manage and review case records."
               showNotification={false}
+              rightElement={<SidebarMenuButton role="admin" />}
             />
 
             <View style={styles.content}>

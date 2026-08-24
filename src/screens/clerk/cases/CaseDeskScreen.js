@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import {getClerkCases} from '../../../services/api/clerkService';
+import {SidebarMenuButton} from '../../../components/navigation/RoleSidebar';
 
 const CASES = [
   {
@@ -213,7 +214,10 @@ const CaseDeskScreen = ({navigation}) => {
         contentContainerStyle={styles.scrollContent}>
         {/* HEADER */}
         <View style={styles.headerSection}>
-          <Text style={styles.pageTitle}>Cases</Text>
+          <View style={styles.headerRow}>
+            <Text style={styles.pageTitle}>Cases</Text>
+            <SidebarMenuButton role="clerk" />
+          </View>
 
           <Text style={styles.pageSubtitle}>
             Create client-linked cases first, then use the
@@ -774,6 +778,13 @@ const styles = StyleSheet.create({
   headerSection: {
     marginTop: 25,
     marginBottom: 20,
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
   },
 
   pageTitle: {

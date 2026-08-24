@@ -15,81 +15,7 @@ import ScheduleDayHeader from '../../../components/clerk/schedule/ScheduleDayHea
 
 import ScheduleHearingCard from '../../../components/clerk/schedule/ScheduleHearingCard';
 import {getClerkHearings} from '../../../services/api/clerkService';
-
-const SCHEDULE = [
-  {
-    id: '1',
-    day: 'Monday',
-    date: '17 Aug 2026',
-    time: '10:00 AM',
-    caseNo: 'LC-2026-103',
-    client: 'test',
-    court: 'District Court',
-    type: 'Hearing',
-    room: 'Court Hall 2',
-    status: 'Scheduled',
-  },
-  {
-    id: '2',
-    day: 'Monday',
-    date: '17 Aug 2026',
-    time: '12:30 PM',
-    caseNo: 'CIV-2026-006',
-    client: 'Suresh Reddy',
-    court: 'Civil Court',
-    type: 'Mention',
-    room: 'Court Hall 4',
-    status: 'Scheduled',
-  },
-  {
-    id: '3',
-    day: 'Tuesday',
-    date: '18 Aug 2026',
-    time: '10:30 AM',
-    caseNo: 'CR-2026-004',
-    client: 'Farhan Khan',
-    court: 'Sessions Court',
-    type: 'Evidence',
-    room: 'Court Hall 1',
-    status: 'Scheduled',
-  },
-  {
-    id: '4',
-    day: 'Wednesday',
-    date: '19 Aug 2026',
-    time: '11:00 AM',
-    caseNo: 'LC-2026-102',
-    client: 'test',
-    court: 'High Court',
-    type: 'Hearing',
-    room: 'Court Hall 6',
-    status: 'Scheduled',
-  },
-  {
-    id: '5',
-    day: 'Thursday',
-    date: '20 Aug 2026',
-    time: '02:00 PM',
-    caseNo: 'CR-2026-003',
-    client: 'Naveen Reddy',
-    court: 'District Court',
-    type: 'Arguments',
-    room: 'Court Hall 3',
-    status: 'Scheduled',
-  },
-  {
-    id: '6',
-    day: 'Friday',
-    date: '21 Aug 2026',
-    time: '10:00 AM',
-    caseNo: 'LC-2026-101',
-    client: 'Satish',
-    court: 'District Court',
-    type: 'Hearing',
-    room: 'Court Hall 2',
-    status: 'Scheduled',
-  },
-];
+import {SidebarMenuButton} from '../../../components/navigation/RoleSidebar';
 
 const MyScheduleScreen = ({
   navigation,
@@ -101,7 +27,23 @@ const MyScheduleScreen = ({
   const [selectedDay, setSelectedDay] =
     useState('All');
   const [schedule, setSchedule] = useState([]);
-  useEffect(() => { getClerkHearings().then((items) => setSchedule(items.map((item) => { const date = new Date(item.hearingDate); return {id: item.hearingId, day: date.toLocaleDateString('en-US', {weekday: 'long'}), date: date.toLocaleDateString('en-IN'), time: date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}), caseNo: item.caseNumber ?? '-', client: item.client?.name ?? item.clientName ?? '-', court: item.courtHall ?? '-', type: item.purpose ?? '-', room: item.courtHall ?? '-', status: item.status ?? '-'}; }))).catch(() => setSchedule([])); }, []);
+  useEffect(() => {
+    getClerkHearings().then((items) => setSchedule(items.map((item) => {
+      const date = new Date(item.hearingDate);
+      if (item.hearingId == null || Number.isNaN(date.getTime())) return null;
+      return {
+        id: item.hearingId,
+        dateValue: date,
+        day: date.toLocaleDateString('en-US', {weekday: 'long'}),
+        date: date.toLocaleDateString('en-IN'),
+        time: date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
+        caseNo: item.caseNumber,
+        court: item.courtHall,
+        type: item.purpose,
+        status: item.status,
+      };
+    }).filter(Boolean))).catch(() => setSchedule([]));
+  }, []);
 
   const [dayIndex, setDayIndex] =
     useState(0);
@@ -145,6 +87,17 @@ const MyScheduleScreen = ({
       return groups;
     }, [filteredSchedule]);
 
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const endOfToday = startOfToday + 24 * 60 * 60 * 1000;
+  const endOfWeek = startOfToday + 7 * 24 * 60 * 60 * 1000;
+  const scheduleSummary = {
+    today: schedule.filter((item) => item.dateValue.getTime() >= startOfToday && item.dateValue.getTime() < endOfToday).length,
+    week: schedule.filter((item) => item.dateValue.getTime() >= startOfToday && item.dateValue.getTime() < endOfWeek).length,
+    upcoming: schedule.filter((item) => item.dateValue.getTime() >= startOfToday).length,
+    pending: schedule.filter((item) => String(item.status || '').trim().toLowerCase() === 'pending').length,
+  };
+
   const cycleDay = () => {
     const nextIndex =
       (dayIndex + 1) % days.length;
@@ -173,9 +126,12 @@ const MyScheduleScreen = ({
         {/* HEADER */}
 
         <View style={styles.headerSection}>
-          <Text style={styles.pageTitle}>
-            My Schedule
-          </Text>
+          <View style={styles.headerRow}>
+            <Text style={styles.pageTitle}>
+              My Schedule
+            </Text>
+            <SidebarMenuButton role="clerk" />
+          </View>
 
           <Text style={styles.pageSubtitle}>
             View your upcoming hearings and
@@ -193,28 +149,28 @@ const MyScheduleScreen = ({
           ]}>
           <ScheduleSummaryCard
             title="TODAY"
-            value="0"
+            value={String(scheduleSummary.today)}
             subtitle="hearings"
             type="blue"
           />
 
           <ScheduleSummaryCard
             title="THIS WEEK"
-            value="6"
+            value={String(scheduleSummary.week)}
             subtitle="scheduled hearings"
             type="green"
           />
 
           <ScheduleSummaryCard
             title="UPCOMING"
-            value="6"
+            value={String(scheduleSummary.upcoming)}
             subtitle="future hearings"
             type="yellow"
           />
 
           <ScheduleSummaryCard
             title="PENDING"
-            value="0"
+            value={String(scheduleSummary.pending)}
             subtitle="requiring attention"
             type="red"
           />
@@ -349,6 +305,13 @@ const styles = StyleSheet.create({
   headerSection: {
     marginTop: 25,
     marginBottom: 20,
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
   },
 
   pageTitle: {

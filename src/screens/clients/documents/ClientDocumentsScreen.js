@@ -18,6 +18,7 @@ import {
   uploadClientDocument,
 } from "../../../services/api/clientDocumentsService";
 import { getApiErrorMessage } from "../../../services/api/authService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const ClientDocumentsScreen = () => {
   const { width } = useWindowDimensions();
@@ -124,7 +125,7 @@ const ClientDocumentsScreen = () => {
   };
 
   const handleView = (document) => {
-    handleDownload(document);
+    Alert.alert("Preview unavailable", "This document has no confirmed preview URL and the current app has no in-app document viewer. Use Download to open or save the file.");
   };
 
   const handleDownload = async (document) => {
@@ -179,7 +180,10 @@ const ClientDocumentsScreen = () => {
         ]}
       >
         <View style={styles.headingContent}>
-          <Text style={styles.pageTitle}>Documents</Text>
+          <View style={styles.headerRow}>
+            <Text style={styles.pageTitle}>Documents</Text>
+            <SidebarMenuButton role="client" />
+          </View>
 
           <Text style={styles.pageDescription}>
             View and manage documents associated with your cases.
@@ -788,6 +792,7 @@ const ClientDocumentsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   screen: {
     flex: 1,
     backgroundColor: "transparent",

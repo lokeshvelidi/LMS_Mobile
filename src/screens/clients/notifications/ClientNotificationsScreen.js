@@ -16,6 +16,7 @@ import {
   markClientNotificationRead,
 } from "../../../services/api/clientNotificationsService";
 import { getApiErrorMessage } from "../../../services/api/authService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const ClientNotificationsScreen = () => {
   const { width } = useWindowDimensions();
@@ -150,6 +151,7 @@ const ClientNotificationsScreen = () => {
           isMobile && styles.pageHeaderMobile,
         ]}
       >
+        <SidebarMenuButton role="client" />
         <View style={styles.headingContent}>
           <Text style={styles.pageTitle}>Notifications</Text>
 

@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AppScreen from "../../components/layout/AppScreen";
 import AppHeader from "../../components/layout/AppHeader";
 import AppText from "../../components/common/AppText";
+import { SidebarMenuButton } from "../../components/navigation/RoleSidebar";
 import { useAuth } from "../../context/AuthContext";
 
 const COLORS = {
@@ -46,15 +47,6 @@ const AdminMoreScreen = ({
     },
 
     {
-      id: "audit",
-      title: "Audit Logs",
-      subtitle:
-        "Review tracked changes across the system",
-      icon: "time-outline",
-      route: "AuditLogs",
-    },
-
-    {
       id: "settings",
       title: "Settings",
       subtitle:
@@ -84,6 +76,7 @@ const AdminMoreScreen = ({
           title="More"
           subtitle="Admin tools and application settings."
           showNotification={false}
+          rightElement={<SidebarMenuButton role="admin" />}
         />
 
         <View style={styles.content}>

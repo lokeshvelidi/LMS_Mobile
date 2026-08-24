@@ -8,6 +8,8 @@ import ClerkHearingCalendarScreen from "../../screens/clerk/hearingCalendar/Cler
 import ClerkPaymentDeskScreen from "../../screens/clerk/paymentDesk/PaymentDeskScreen";
 import ClerkReportsScreen from "../../screens/clerk/reports/ClerkReportsScreen";
 import ClerkDocumentsScreen from "../../screens/clerk/documents/DocumentsScreen";
+import EditClerkProfileScreen from "../../screens/clerk/profile/EditClerkProfileScreen";
+import ChangeClerkPasswordScreen from "../../screens/clerk/profile/ChangeClerkPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +49,8 @@ const ClerkNavigator = () => {
         name="ClerkDocuments"
         component={ClerkDocumentsScreen}
       />
+      <Stack.Screen name="EditClerkProfile" component={EditClerkProfileScreen} />
+      <Stack.Screen name="ChangeClerkPassword" component={ChangeClerkPasswordScreen} />
     </Stack.Navigator>
   );
 };

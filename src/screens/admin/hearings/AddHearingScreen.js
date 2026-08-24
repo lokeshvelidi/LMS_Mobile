@@ -35,7 +35,7 @@ const AddHearingScreen = ({
     route?.params?.editMode;
 
   const [title, setTitle] =
-    useState(existing?.title || "");
+    useState(existing?.purpose || "");
 
   const [caseNumber, setCaseNumber] =
     useState(
@@ -50,7 +50,7 @@ const AddHearingScreen = ({
     useState(existing?.client || "");
 
   const [date, setDate] =
-    useState(existing?.date || "");
+    useState(existing?.hearingDate || "");
 
   const [time, setTime] =
     useState(existing?.time || "");
@@ -61,14 +61,14 @@ const AddHearingScreen = ({
     );
 
   const [court, setCourt] =
-    useState(existing?.court || "");
+    useState(existing?.courtHall || "");
 
   const [judge, setJudge] =
     useState(existing?.judge || "");
 
   const [type, setType] =
     useState(
-      existing?.type ||
+      existing?.purpose ||
         "Court Hearing"
     );
 

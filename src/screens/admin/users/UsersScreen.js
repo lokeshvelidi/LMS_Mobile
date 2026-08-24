@@ -14,6 +14,7 @@ import {
 
 import AppScreen from "../../../components/layout/AppScreen";
 import AppHeader from "../../../components/layout/AppHeader";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 import AppText from "../../../components/common/AppText";
 
 import UserCard from "../../../components/admin/users/UserCard";
@@ -215,6 +216,7 @@ const UsersScreen = ({
           title="Users"
           subtitle="Create users, assign roles, and review portal access."
           showNotification={false}
+          rightElement={<SidebarMenuButton role="admin" />}
         />
 
         <View style={styles.content}>
@@ -343,6 +345,7 @@ const UsersScreen = ({
 
 const styles = StyleSheet.create({
   listContent: {
+    paddingHorizontal: 18,
     paddingBottom: 30,
     backgroundColor: COLORS.background,
   },

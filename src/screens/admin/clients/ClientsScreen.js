@@ -3,6 +3,7 @@ import { Alert, FlatList, Pressable, TextInput, View } from "react-native";
 import AppScreen from "../../../components/layout/AppScreen";
 import AppHeader from "../../../components/layout/AppHeader";
 import AppText from "../../../components/common/AppText";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 import { getAdminClients } from "../../../services/api/adminClientsService";
 
 const ClientsScreen = ({ navigation }) => {

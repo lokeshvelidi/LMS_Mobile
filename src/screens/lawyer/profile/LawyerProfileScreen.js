@@ -20,13 +20,14 @@ import LawyerProfileActions from "../../../components/lawyer/profile/LawyerProfi
 import { useAuth } from "../../../context/AuthContext";
 import { getApiErrorMessage } from "../../../services/api/authService";
 import { getLawyerProfile } from "../../../services/api/lawyerService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const COLORS = {
   background: "#F3F0E8",
   navy: "#102A43",
 };
 
-const LawyerProfileScreen = () => {
+const LawyerProfileScreen = ({ navigation }) => {
   const { logout } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,19 +44,9 @@ const LawyerProfileScreen = () => {
     return () => { active = false; };
   }, []);
 
-  const handleEdit = () => {
-    Alert.alert(
-      "Edit Profile",
-      "Profile editing will be connected after API integration."
-    );
-  };
+  const handleEdit = () => navigation.getParent()?.navigate("EditLawyerProfile");
 
-  const handleChangePassword = () => {
-    Alert.alert(
-      "Change Password",
-      "Password change flow will be connected after API integration."
-    );
-  };
+  const handleChangePassword = () => navigation.getParent()?.navigate("ChangeLawyerPassword");
 
   const handleLogout = () => {
     Alert.alert(
@@ -89,6 +80,7 @@ const LawyerProfileScreen = () => {
         }
       >
         <View style={styles.header}>
+          <View style={styles.headerRow}><View>
           <AppText
             size="xxl"
             weight="bold"
@@ -96,6 +88,7 @@ const LawyerProfileScreen = () => {
           >
             My Profile
           </AppText>
+          </View><SidebarMenuButton role="lawyer" /></View>
 
           <AppText
             size="sm"
@@ -165,6 +158,7 @@ const styles = StyleSheet.create({
   bottomSpace: {
     height: 30,
   },
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
 
   stateCard: {
     minHeight: 180,

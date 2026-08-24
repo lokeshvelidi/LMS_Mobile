@@ -8,6 +8,7 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
+  TextInput,
   View,
 } from "react-native";
 
@@ -236,17 +237,7 @@ const AuditLogsScreen = () => {
                   />
                 </View>
 
-                <Pressable
-                  style={styles.searchPressable}
-                  onPress={() => {}}
-                >
-                  <AppText
-                    size="sm"
-                    color="textSecondary"
-                  >
-                    Search user, activity, module...
-                  </AppText>
-                </Pressable>
+                <TextInput value={search} onChangeText={setSearch} style={styles.searchInput} placeholder="Search user, activity, module..." placeholderTextColor="#8797A9" />
               </View>
 
               <View style={styles.toolbar}>
@@ -402,6 +393,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 80,
     paddingHorizontal: 30,
+  },
+
+  searchInput: {
+    flex: 1,
+    height: "100%",
+    color: COLORS.navy,
+    fontSize: 13,
   },
 
   retry: {

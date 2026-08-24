@@ -9,13 +9,16 @@ import {
   useWindowDimensions,
   ActivityIndicator,
   Alert,
+  Modal,
 } from "react-native";
 import { useAuth } from "../../../context/AuthContext";
 import {
   getClientProfile,
   updateClientProfile,
+  changeClientPassword,
 } from "../../../services/api/clientProfileService";
 import { getApiErrorMessage } from "../../../services/api/authService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const emptyProfile = {
   firstName: "",
@@ -41,6 +44,10 @@ const ClientProfileScreen = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const [passwordModal, setPasswordModal] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -89,7 +96,23 @@ const ClientProfileScreen = () => {
   };
 
   const handleChangePassword = () => {
-    Alert.alert("Password change", "Enter-current-password fields are not available in this existing screen, so no password request was sent.");
+    setOldPassword("");
+    setNewPassword("");
+    setPasswordModal(true);
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (!oldPassword || !newPassword) return Alert.alert("Password change", "Enter both password fields.");
+    try {
+      setChangingPassword(true);
+      await changeClientPassword(oldPassword, newPassword);
+      setPasswordModal(false);
+      Alert.alert("Password updated", "Your password was changed successfully.");
+    } catch (requestError) {
+      Alert.alert("Password update failed", getApiErrorMessage(requestError, "Unable to change password."));
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   return (
@@ -103,12 +126,28 @@ const ClientProfileScreen = () => {
       ========================= */}
 
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>My Profile</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>My Profile</Text>
+          <SidebarMenuButton role="client" />
+        </View>
 
         <Text style={styles.pageDescription}>
           View and manage your personal account information.
         </Text>
       </View>
+      <Modal visible={passwordModal} transparent animationType="fade" onRequestClose={() => setPasswordModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.passwordModal}>
+            <Text style={styles.cardTitle}>Change Password</Text>
+            <TextInput secureTextEntry value={oldPassword} onChangeText={setOldPassword} placeholder="Current password" style={styles.input} />
+            <TextInput secureTextEntry value={newPassword} onChangeText={setNewPassword} placeholder="New password" style={[styles.input, styles.passwordInput]} />
+            <View style={styles.formActions}>
+              <Pressable style={styles.cancelButton} onPress={() => setPasswordModal(false)}><Text style={styles.cancelButtonText}>Cancel</Text></Pressable>
+              <Pressable disabled={changingPassword} style={styles.saveButton} onPress={handlePasswordSubmit}><Text style={styles.saveButtonText}>{changingPassword ? "Updating..." : "Update"}</Text></Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* =========================
           PROFILE LAYOUT
@@ -508,6 +547,9 @@ const ClientProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  modalOverlay: { flex: 1, backgroundColor: "rgba(7, 29, 43, 0.45)", justifyContent: "center", padding: 22 },
+  passwordModal: { backgroundColor: "#FFFDF8", borderRadius: 18, padding: 20 },
+  passwordInput: { marginTop: 12 },
   screen: {
     flex: 1,
     backgroundColor: "transparent",
@@ -526,6 +568,7 @@ const styles = StyleSheet.create({
   pageHeader: {
     marginBottom: 24,
   },
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
 
   pageTitle: {
     fontSize: 32,

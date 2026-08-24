@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import {getClerkClients} from '../../../services/api/clerkService';
+import {SidebarMenuButton} from '../../../components/navigation/RoleSidebar';
 
 const CLIENTS = [
   {
@@ -118,7 +119,10 @@ const ClientListScreen = ({navigation}) => {
         contentContainerStyle={styles.scrollContent}>
         {/* PAGE HEADER */}
         <View style={styles.headerSection}>
-          <Text style={styles.pageTitle}>Clients</Text>
+          <View style={styles.headerRow}>
+            <Text style={styles.pageTitle}>Clients</Text>
+            <SidebarMenuButton role="clerk" />
+          </View>
 
           <Text style={styles.pageSubtitle}>
             Manage your client directory.
@@ -494,6 +498,13 @@ const styles = StyleSheet.create({
   headerSection: {
     marginTop: 25,
     marginBottom: 20,
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
   },
 
   pageTitle: {

@@ -13,6 +13,7 @@ import {
   getClientCases,
 } from "../../../services/api/clientCasesService";
 import { getApiErrorMessage } from "../../../services/api/authService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const ClientMyCasesScreen = ({ navigation }) => {
   const { width } = useWindowDimensions();
@@ -134,7 +135,10 @@ const ClientMyCasesScreen = ({ navigation }) => {
     >
       {/* PAGE HEADER */}
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>My Cases</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>My Cases</Text>
+          <SidebarMenuButton role="client" />
+        </View>
 
         <Text style={styles.pageDescription}>
           Cases linked to your account. You have read-only access to case
@@ -729,6 +733,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#74879C",
   },
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
 
   stateContainer: {
     minHeight: 160,

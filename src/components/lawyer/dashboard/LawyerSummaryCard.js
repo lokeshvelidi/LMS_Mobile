@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Pressable,
   StyleSheet,
   View,
 } from "react-native";
@@ -22,16 +23,10 @@ const LawyerSummaryCard = ({
   label,
   value,
   accent,
+  onPress,
 }) => {
-  return (
-    <View
-      style={[
-        styles.card,
-        {
-          borderLeftColor: accent,
-        },
-      ]}
-    >
+  const content = (
+    <>
       <View style={styles.topRow}>
         <AppText
           size="xs"
@@ -51,8 +46,9 @@ const LawyerSummaryCard = ({
       </AppText>
 
       <View style={styles.cornerShape} />
-    </View>
+    </>
   );
+  return onPress ? <Pressable onPress={onPress} style={[styles.card, { borderLeftColor: accent }]}>{content}</Pressable> : <View style={[styles.card, { borderLeftColor: accent }]}>{content}</View>;
 };
 
 const styles = StyleSheet.create({

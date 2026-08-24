@@ -14,11 +14,14 @@ const COLORS = {
 };
 
 const HearingDateHeader = ({
-  date,
-  month,
-  day,
+  hearingDate,
   count,
 }) => {
+  const parsed = hearingDate ? new Date(hearingDate) : null;
+  const valid = parsed && !Number.isNaN(parsed.getTime());
+  const date = valid ? String(parsed.getDate()).padStart(2, "0") : "";
+  const month = valid ? parsed.toLocaleString("en", { month: "short" }).toUpperCase() : "";
+  const day = valid ? parsed.toLocaleString("en", { weekday: "long" }) : "Date unavailable";
   return (
     <View style={styles.container}>
       <View style={styles.dateContainer}>

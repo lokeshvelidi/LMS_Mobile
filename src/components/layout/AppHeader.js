@@ -6,6 +6,8 @@ import {
 } from "react-native";
 
 import AppText from "../common/AppText";
+import { useRoute } from "@react-navigation/native";
+import { SidebarMenuButton } from "../navigation/RoleSidebar";
 
 const COLORS = {
   navy: "#102A43",
@@ -16,9 +18,19 @@ const COLORS = {
 const AppHeader = ({
   title,
   subtitle,
+  rightElement,
+  compact = false,
 }) => {
+  const route = useRoute();
+  const sidebarRoles = {
+    AdminDashboard: "admin", Cases: "admin", Clients: "admin", Users: "admin", Reports: "admin", More: "admin", Hearings: "admin", Courts: "admin", Settings: "admin",
+    ClerkDashboard: "clerk", ClerkClients: "clerk", ClerkCases: "clerk", ClerkSchedule: "clerk", ClerkProfile: "clerk", ClerkDocuments: "clerk", ClerkReports: "clerk", ClerkPaymentDesk: "clerk", ClerkHearingCalendar: "clerk",
+    LawyerDashboard: "lawyer", LawyerCases: "lawyer", LawyerHearings: "lawyer", LawyerPetitions: "lawyer", LawyerProfile: "lawyer", LawyerDocuments: "lawyer",
+    ClientDashboard: "client", ClientCases: "client", ClientTimeline: "client", ClientNotifications: "client", ClientProfile: "client", ClientDocuments: "client", ClientBilling: "client", ClientHearingSchedule: "client", ClientClosedCases: "client",
+  };
+  const sidebar = !rightElement && sidebarRoles[route.name] ? <SidebarMenuButton role={sidebarRoles[route.name]} /> : rightElement;
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, compact && styles.compact]}>
       <View style={styles.titleRow}>
         <View style={styles.titleIndicator} />
 
@@ -28,6 +40,8 @@ const AppHeader = ({
         >
           {title}
         </AppText>
+        <View style={styles.spacer} />
+        {sidebar}
       </View>
 
       {subtitle ? (
@@ -45,9 +59,9 @@ const AppHeader = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 25,
+    marginTop: 10,
     paddingHorizontal: 18,
-    paddingTop: 16,
+    paddingTop: 10,
     paddingBottom: 18,
   },
 
@@ -68,6 +82,8 @@ const styles = StyleSheet.create({
     marginTop: 7,
     paddingLeft: 15,
   },
+  spacer: { flex: 1 },
+  compact: { marginTop: 8, paddingTop: 8, paddingBottom: 12 },
 });
 
 export default AppHeader;

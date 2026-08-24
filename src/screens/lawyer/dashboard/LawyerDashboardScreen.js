@@ -16,6 +16,7 @@ import CaseStatusChart from "../../../components/lawyer/dashboard/CaseStatusChar
 import HearingsByCaseChart from "../../../components/lawyer/dashboard/HearingsByCaseChart";
 import UpcomingHearingCard from "../../../components/lawyer/dashboard/UpcomingHearingCard";
 import { getLawyerDashboard } from "../../../services/api/lawyerService";
+import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
 
 const COLORS = {
   background: "#F3F0E8",
@@ -102,6 +103,7 @@ const LawyerDashboardScreen = ({
         ========================== */}
 
         <View style={styles.header}>
+          <View style={styles.headerTop}>
           <View>
             <AppText
               size="xxl"
@@ -119,7 +121,7 @@ const LawyerDashboardScreen = ({
               Welcome back! Here's what's
               happening today.
             </AppText>
-          </View>
+          </View><SidebarMenuButton role="lawyer" /></View>
 
           <View style={styles.profile}>
             <View style={styles.avatar}>
@@ -176,6 +178,7 @@ const LawyerDashboardScreen = ({
               label={item.label}
               value={item.value}
               accent={item.accent}
+              onPress={() => navigation.navigate(item.id === "hearings" ? "LawyerHearings" : item.id === "documents" ? "LawyerPetitions" : "LawyerCases")}
             />
           ))}
         </ScrollView>
@@ -221,6 +224,7 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 18,
   },
+  headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
 
   heading: {
     color: COLORS.navy,

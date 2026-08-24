@@ -17,9 +17,7 @@ import AppText from "../../../components/common/AppText";
 
 import CourtCard from "../../../components/admin/masterData/CourtCard";
 import CourtSearch from "../../../components/admin/masterData/CourtSearch";
-import CourtFilter from "../../../components/admin/masterData/CourtFilter";
 import { getAdminCourts } from "../../../services/api/adminCourtsService";
-import { Alert } from "react-native";
 
 const COLORS = {
   background: "#F5F2EA",
@@ -30,65 +28,15 @@ const COLORS = {
   border: "#DED9CE",
 };
 
-const COURTS = [
-  {
-    id: "1",
-    name: "High Court of Andhra Pradesh",
-    code: "HC-AP",
-    location: "Amaravati",
-    type: "High Court",
-    status: "Active",
-    caseCount: 24,
-  },
-
-  {
-    id: "2",
-    name: "District Court",
-    code: "DC-RJY",
-    location: "Rajahmundry",
-    type: "District Court",
-    status: "Active",
-    caseCount: 18,
-  },
-
-  {
-    id: "3",
-    name: "Family Court",
-    code: "FC-RJY",
-    location: "Rajahmundry",
-    type: "Family Court",
-    status: "Active",
-    caseCount: 9,
-  },
-
-  {
-    id: "4",
-    name: "Consumer Court",
-    code: "CC-RJY",
-    location: "Rajahmundry",
-    type: "Consumer Court",
-    status: "Inactive",
-    caseCount: 0,
-  },
-];
-
 const CourtsScreen = ({
   navigation,
 }) => {
   const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { getAdminCourts().then((items) => setCourts(items.map((item) => ({ ...item, name: item.courtName ?? item.name ?? "-", code: item.code ?? "-", location: item.location ?? "-", type: item.type ?? "-", status: item.status ?? "-", caseCount: Array.isArray(item.cases) ? item.cases.length : 0 })))).catch((e) => Alert.alert("Courts unavailable", e.response?.data?.message || "Unable to load courts.")).finally(() => setLoading(false)); }, []);
+  const [error, setError] = useState(null);
+  useEffect(() => { getAdminCourts().then(setCourts).catch((e) => setError(e.response?.data?.message || "Unable to load courts.")).finally(() => setLoading(false)); }, []);
   const [search, setSearch] =
     useState("");
-
-  const [filterVisible, setFilterVisible] =
-    useState(false);
-
-  const [type, setType] =
-    useState("All");
-
-  const [status, setStatus] =
-    useState("All");
 
   const filteredCourts = useMemo(() => {
     let result = [...courts];
@@ -99,45 +47,18 @@ const CourtsScreen = ({
     if (searchValue) {
       result = result.filter((court) => {
         return (
-          court.name
-            .toLowerCase()
-            .includes(searchValue) ||
-          court.code
-            .toLowerCase()
-            .includes(searchValue) ||
-          court.location
+          String(court.courtName || "")
             .toLowerCase()
             .includes(searchValue)
         );
       });
     }
 
-    if (type !== "All") {
-      result = result.filter(
-        (court) => court.type === type
-      );
-    }
-
-    if (status !== "All") {
-      result = result.filter(
-        (court) =>
-          court.status === status
-      );
-    }
-
     return result;
   }, [
     courts,
     search,
-    type,
-    status,
   ]);
-
-  const clearFilters = () => {
-    setSearch("");
-    setType("All");
-    setStatus("All");
-  };
 
   return (
     <AppScreen>
@@ -163,20 +84,6 @@ const CourtsScreen = ({
               />
 
               <View style={styles.toolbar}>
-                <Pressable
-                  onPress={() =>
-                    setFilterVisible(true)
-                  }
-                  style={styles.filterButton}
-                >
-                  <AppText
-                    size="sm"
-                    weight="semiBold"
-                  >
-                    Filter
-                  </AppText>
-                </Pressable>
-
                 <Pressable
                   onPress={() =>
                     navigation.navigate(
@@ -207,10 +114,7 @@ const CourtsScreen = ({
                   size="xs"
                   color="textSecondary"
                 >
-                  {type !== "All" ||
-                  status !== "All"
-                    ? "Filters applied"
-                    : "All courts"}
+                  {search.trim() ? "Search results" : "All courts"}
                 </AppText>
               </View>
             </View>
@@ -243,24 +147,12 @@ const CourtsScreen = ({
               color="textSecondary"
               style={styles.emptyText}
             >
-              Try changing your search or
-              filters.
+              {loading ? "Loading courts..." : error || "No courts found."}
             </AppText>
           </View>
         }
       />
 
-      <CourtFilter
-        visible={filterVisible}
-        onClose={() =>
-          setFilterVisible(false)
-        }
-        type={type}
-        status={status}
-        onTypeChange={setType}
-        onStatusChange={setStatus}
-        onClear={clearFilters}
-      />
     </AppScreen>
   );
 };

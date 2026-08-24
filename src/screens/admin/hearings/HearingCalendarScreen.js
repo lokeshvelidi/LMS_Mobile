@@ -28,6 +28,7 @@ const COLORS = {
   border: "#DED9CE",
 };
 
+/* Legacy sample records intentionally disabled. This screen uses API data only.
 const HEARINGS = [
   {
     id: "1",
@@ -113,13 +114,13 @@ const HEARINGS = [
     type: "Court Hearing",
     status: "Scheduled",
   },
-];
+]; */
 
 const HearingCalendarScreen = ({
   navigation,
 }) => {
   const [hearings, setHearings] = useState([]);
-  useEffect(() => { getAdminHearings().then((items) => setHearings(items.map((x) => ({ ...x, id: x.hearingId, caseNumber: x.caseNumber ?? "-", client: x.client?.name ?? "-", date: x.hearingDate ? new Date(x.hearingDate).toLocaleDateString("en-IN") : "-", status: x.status ?? "-", type: x.purpose ?? "-" })))).catch(() => {}); }, []);
+  useEffect(() => { getAdminHearings().then(setHearings).catch(() => setHearings([])); }, []);
   const [filterVisible, setFilterVisible] =
     useState(false);
 
@@ -137,7 +138,7 @@ const HearingCalendarScreen = ({
 
       const typeMatch =
         type === "All" ||
-        item.type === type;
+        item.purpose === type;
 
       return (
         statusMatch && typeMatch
@@ -150,11 +151,12 @@ const HearingCalendarScreen = ({
 
     filteredHearings.forEach(
       (hearing) => {
-        if (!groups[hearing.date]) {
-          groups[hearing.date] = [];
+        const date = hearing.hearingDate ? new Date(hearing.hearingDate).toISOString().slice(0, 10) : "unknown";
+        if (!groups[date]) {
+          groups[date] = [];
         }
 
-        groups[hearing.date].push(
+        groups[date].push(
           hearing
         );
       }
@@ -239,16 +241,14 @@ const HearingCalendarScreen = ({
           return (
             <View>
               <HearingDateHeader
-                date={first.dateNumber}
-                month={first.month}
-                day={first.day}
+                hearingDate={first.hearingDate}
                 count={hearings.length}
               />
 
               {hearings.map(
                 (hearing) => (
                   <HearingCard
-                    key={hearing.id}
+                    key={String(hearing.hearingId)}
                     hearing={hearing}
                     onPress={() =>
                       navigation.navigate(

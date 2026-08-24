@@ -22,9 +22,9 @@ const AppText = ({
   const colorValue =
     color === "textSecondary"
       ? COLORS.secondary
-      : color === "white"
+      : color === "white" || color === "textWhite"
         ? COLORS.white
-        : COLORS.navy;
+      : COLORS.navy;
 
   return (
     <Text
