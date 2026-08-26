@@ -1,5 +1,5 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import AdminDashboardScreen from "../../screens/admin/dashboard/AdminDashboardScreen";
@@ -9,17 +9,27 @@ import AdminReportsScreen from "../../screens/admin/reports/ReportsScreen";
 import AdminMoreScreen from "./AdminMoreScreen";
 import AdminClientsScreen from "../../screens/admin/clients/ClientsScreen";
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 const icons = {AdminDashboard: ["home-outline", "home"], Cases: ["briefcase-outline", "briefcase"], Clients: ["person-outline", "person"], Users: ["people-outline", "people"], ReportsTab: ["bar-chart-outline", "bar-chart"], More: ["grid-outline", "grid"]};
 
 const AdminBottomNavigator = () => {
   return (
     <Tab.Navigator
+      tabBarPosition="bottom"
       screenOptions={({route}) => ({
         headerShown: false,
+        swipeEnabled: true,
+        animationEnabled: true,
+        lazy: true,
+        lazyPreloadDistance: 1,
+        sceneStyle: { backgroundColor: "#D9DEE0" },
         tabBarActiveTintColor: "#18324D",
         tabBarInactiveTintColor: "#718198",
-        tabBarStyle: {height: 64, marginBottom: 12, marginHorizontal: 12, borderRadius: 16, paddingTop: 6, paddingBottom: 6},
+        tabBarShowIcon: true,
+        tabBarStyle: {height: 64, marginBottom: 12, marginHorizontal: 12, borderRadius: 16, paddingTop: 6, paddingBottom: 6, backgroundColor: "#FFFFFF", borderTopWidth: 1, borderColor: "#E2E4E3", elevation: 4},
+        tabBarItemStyle: {paddingVertical: 0},
+        tabBarIndicatorStyle: {height: 0},
+        tabBarLabelStyle: {fontSize: 11, fontWeight: "600", textTransform: "none"},
         tabBarIcon: ({color, size, focused}) => <Ionicons name={icons[route.name]?.[focused ? 1 : 0] || "ellipse-outline"} size={size} color={color} />,
       })}
     >

@@ -46,7 +46,7 @@ const LawyerNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="LawyerMain" component={LawyerBottomNavigator} />
     {screens.map(([name, component]) => (
-      <Stack.Screen key={name} name={name} component={component} />
+    <Stack.Screen key={name} name={name} component={component} />
     ))}
   </Stack.Navigator>
 );
