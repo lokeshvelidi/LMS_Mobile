@@ -3,6 +3,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 import {
   Alert,
@@ -102,7 +103,8 @@ const UsersScreen = ({
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [regeneratingId, setRegeneratingId] = useState(null);
-  useEffect(() => { getAdminUsers().then((items) => setUsers(items.map((x) => ({ ...x, id: x.appUserId ?? x.userId ?? x.id, name: x.fullName ?? x.name ?? "-", username: x.username ?? x.userName ?? "-", email: x.email ?? "-", mobile: x.mobile ?? x.phone ?? "-", role: x.role ?? "-", status: x.status ?? "-", created: x.createdDate ?? "-" })))).catch((e) => Alert.alert("Users unavailable", e.response?.data?.message || "Unable to load users.")).finally(() => setLoading(false)); }, []);
+  const loadUsers = React.useCallback(() => { setLoading(true); getAdminUsers().then((items) => setUsers(items.map((x) => ({ ...x, id: x.appUserId ?? x.id ?? x.userId, name: x.fullName ?? x.name ?? "-", username: x.appUserName ?? x.username ?? x.userName ?? "-", email: x.email ?? "-", mobile: x.mobile ?? x.phone ?? "-", role: x.role ?? "-", status: x.status ?? "-", created: x.createdDate ?? x.createdAt ?? "-" })))).catch((e) => Alert.alert("Users unavailable", e.response?.data?.message || "Unable to load users.")).finally(() => setLoading(false)); }, []);
+  useFocusEffect(React.useCallback(() => { loadUsers(); }, [loadUsers]));
   const [search, setSearch] = useState("");
 
   const [filterVisible, setFilterVisible] =
@@ -242,7 +244,7 @@ const UsersScreen = ({
             </Pressable>
 
             <Pressable
-              onPress={() => Alert.alert("Unavailable", "The backend does not expose an AppUser create endpoint.")}
+              onPress={() => navigation.navigate("AddUser")}
               style={styles.addButton}
             >
               <AppText
@@ -250,7 +252,7 @@ const UsersScreen = ({
                 weight="semiBold"
                 style={styles.addText}
               >
-                Add User (Unavailable)
+                Add User
               </AppText>
             </Pressable>
           </View>

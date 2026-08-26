@@ -3,6 +3,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { Alert } from "react-native";
 
 import {
@@ -106,17 +107,24 @@ const CasesScreen = ({
       let total = null;
       do {
         const result = await getAdminCases({ page, pageSize });
+        const previousCount = allItems.length;
         allItems = allItems.concat(result.items);
+        const uniqueItems = [...new Map(allItems.map((item) => [String(item.id), item])).values()];
+        if (uniqueItems.length === previousCount && result.items.length) break;
+        allItems = uniqueItems;
         total = result.total;
-        if (!result.items.length || allItems.length >= total || result.items.length < pageSize) break;
+        // Some backend versions ignore pageSize and always return 10 rows.
+        // Keep requesting pages until the response is empty or total is reached.
+        if (!result.items.length || (total != null && allItems.length >= total)) break;
         page += 1;
-      } while (total == null || allItems.length < total);
+      } while (page <= 100 && (total == null || allItems.length < total));
       setCases(allItems);
     } catch (e) {
       Alert.alert("Cases unavailable", e.response?.data?.message || "Unable to load cases.");
     } finally { setLoading(false); }
   };
-  useEffect(() => { loadCases(); Promise.all([getAdminMasterValues("/api/master/case-types"), getAdminMasterValues("/api/master/case-statuses"), getAdminMasterValues("/api/master/priorities")]).then(([caseTypes, statuses, priorities]) => setMasterOptions({ caseTypes, statuses, priorities })).catch(() => {}); }, []);
+  useEffect(() => { Promise.all([getAdminMasterValues("/api/master/case-types"), getAdminMasterValues("/api/master/case-statuses"), getAdminMasterValues("/api/master/priorities")]).then(([caseTypes, statuses, priorities]) => setMasterOptions({ caseTypes, statuses, priorities })).catch(() => {}); }, []);
+  useFocusEffect(React.useCallback(() => { loadCases(); }, []));
   const [search, setSearch] = useState("");
 
   const [filterVisible, setFilterVisible] =

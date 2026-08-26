@@ -12,8 +12,14 @@ const MENU = {
   ],
   lawyer: [
     ["HearingCalendar", "Hearing Calendar", "calendar-outline"],
-    ["Documents", "Documents", "document-text-outline"],
+    ["UploadCourtOrders", "Upload Court Orders", "cloud-upload-outline"],
     ["RequestPayment", "Request Payment", "card-outline"],
+    ["ContinueCaseUpdates", "Continue Case Updates", "create-outline"],
+    ["CaseCompleted", "Case Completed", "checkmark-done-outline"],
+    ["MarkReadyForClosure", "Mark Ready for Closure", "lock-open-outline"],
+    ["CaseNotes", "Case Notes", "document-text-outline"],
+    // ["Documents", "View Documents", "folder-open-outline"],
+    ["HearingDesk", "Hearing Desk", "desktop-outline"],
   ],
   clerk: [
     ["ClerkHearingCalendar", "Hearing Calendar", "calendar-outline"],
@@ -23,7 +29,7 @@ const MENU = {
   ],
   admin: [
     ["Hearings", "Hearing Calendar", "calendar-outline"],
-    ["Documents", "Documents", "document-text-outline"],
+    // ["Documents", "Documents", "document-text-outline"],
     ["Reports", "Reports", "bar-chart-outline"],
     ["Settings", "Settings", "settings-outline"],
     ["Master", "Master Data", "layers-outline"],

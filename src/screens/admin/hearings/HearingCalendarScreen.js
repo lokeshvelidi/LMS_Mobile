@@ -1,8 +1,5 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useMemo, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 import {
   FlatList,
@@ -120,7 +117,12 @@ const HearingCalendarScreen = ({
   navigation,
 }) => {
   const [hearings, setHearings] = useState([]);
-  useEffect(() => { getAdminHearings().then(setHearings).catch(() => setHearings([])); }, []);
+  const [loading, setLoading] = useState(true);
+  const loadHearings = React.useCallback(() => {
+    setLoading(true);
+    getAdminHearings().then(setHearings).catch(() => setHearings([])).finally(() => setLoading(false));
+  }, []);
+  useFocusEffect(React.useCallback(() => { loadHearings(); }, [loadHearings]));
   const [filterVisible, setFilterVisible] =
     useState(false);
 
@@ -278,7 +280,7 @@ const HearingCalendarScreen = ({
               color="textSecondary"
               style={styles.emptyText}
             >
-              Try changing your filters.
+              {loading ? "Loading hearings..." : "Try changing your filters."}
             </AppText>
           </View>
         }

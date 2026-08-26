@@ -3,6 +3,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import {
   ActivityIndicator,
@@ -552,7 +553,10 @@ const EditField = ({
   onChangeText,
   placeholder,
   multiline,
-}) => (
+}) => {
+  const [showPicker, setShowPicker] = useState(false);
+  if (label === "Next Hearing Date") return <View style={styles.editField}><AppText size="xs" weight="semiBold" style={styles.editLabel}>{label}</AppText><Pressable onPress={() => setShowPicker(true)} style={styles.editInput}><AppText>{value || "Select date"}</AppText></Pressable>{showPicker ? <DateTimePicker value={value && !Number.isNaN(new Date(value).getTime()) ? new Date(value) : new Date()} mode="date" onChange={(event, date) => { setShowPicker(false); if (date) onChangeText(date.toISOString().slice(0, 10)); }} /> : null}</View>;
+  return (
   <View style={styles.editField}>
     <AppText size="xs" weight="semiBold" style={styles.editLabel}>{label}</AppText>
     <TextInput
@@ -564,7 +568,8 @@ const EditField = ({
       style={[styles.editInput, multiline && styles.multilineInput]}
     />
   </View>
-);
+  );
+};
 
 const EditSelect = ({
   label,

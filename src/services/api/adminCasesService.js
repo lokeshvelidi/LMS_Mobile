@@ -26,7 +26,7 @@ export const getAdminCases = async (params = {}) => {
   const response = await apiClient.get("/api/cases/paged", { params });
   const payload = unwrap(response.data);
   const items = Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? [];
-  return { items: items.map(mapAdminCase), total: payload?.total ?? payload?.totalCount ?? items.length, page: payload?.page ?? params.page ?? 1, pageSize: payload?.pageSize ?? params.pageSize ?? items.length };
+  return { items: items.map(mapAdminCase), total: payload?.total ?? payload?.totalCount ?? null, page: payload?.page ?? params.page ?? 1, pageSize: payload?.pageSize ?? params.pageSize ?? items.length };
 };
 
 export const getAdminCaseDetail = async (caseId) => {

@@ -359,12 +359,10 @@ const ClerkReportsScreen = () => {
                   }
                   subtitle="Current period breakdown">
                   {reportData.map(
-                    item => (
+                    (item, index) => (
                       <ReportRow
-                        key={item.label}
-                        label={
-                          item.label
-                        }
+                        key={`${item.label ?? item.caseStatus ?? item.status ?? "report-row"}-${index}`}
+                        label={item.label ?? item.caseStatus ?? item.status ?? item.caseType ?? "Report item"}
                         value={
                           item.value
                         }

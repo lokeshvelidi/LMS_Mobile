@@ -1,7 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-} from "react";
+import React, { useState } from "react";
 
 import {
   Alert,
@@ -19,7 +16,7 @@ import CompletionCaseSelector from "../../../components/lawyer/caseCompletion/Co
 import CompletionSummary from "../../../components/lawyer/caseCompletion/CompletionSummary";
 
 import CompletionForm from "../../../components/lawyer/caseCompletion/CompletionForm";
-import { getLawyerCases } from "../../../services/api/lawyerService";
+import { getLawyerCases, updateLawyerCaseStatus } from "../../../services/api/lawyerService";
 
 const COLORS = {
   background: "#F3F0E8",
@@ -32,37 +29,8 @@ const CaseCompletedScreen = ({
 }) => {
   const [cases, setCases] = useState([]);
   React.useEffect(() => { getLawyerCases().then(setCases).catch((e) => Alert.alert("Cases unavailable", e.message)); }, []);
-  const legacyCases = useMemo(
-    () => [
-      {
-        caseNumber: "CIV-2026-004",
-        client: "Vijay Kumar",
-        type: "Civil",
-        stage: "Written Statement",
-        status: "In Progress",
-      },
-
-      {
-        caseNumber: "LC-2026-102",
-        client: "test",
-        type: "Criminal",
-        stage: "Stage not set",
-        status: "New",
-      },
-
-      {
-        caseNumber: "CIV-2026-001",
-        client: "Ramesh Kumar",
-        type: "Civil",
-        stage: "Evidence",
-        status: "In Progress",
-      },
-    ],
-    []
-  );
-
   const initialCase =
-    route?.params?.caseData || cases[0] || legacyCases[0];
+    route?.params?.caseData || cases[0] || null;
 
   const [
     selectedCase,
@@ -93,10 +61,10 @@ const CaseCompletedScreen = ({
       return;
     }
 
-    Alert.alert(
-      "Complete Case",
-      "The case will be marked as completed after API integration."
-    );
+    if (!selectedCase?.id) return Alert.alert("Complete Case", "Select a valid assigned case.");
+    updateLawyerCaseStatus(selectedCase.id, "Completed")
+      .then(() => Alert.alert("Complete Case", "The case status was updated to Completed."))
+      .catch((e) => Alert.alert("Complete Case failed", e.message || "Unable to complete the case."));
   };
 
   const handleCaseSelect = (item) => {

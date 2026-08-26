@@ -35,6 +35,8 @@ const textStyle = name => {
   if (n.includes("label") || n.includes("meta") || n.includes("subtitle") || n.includes("date")) result.push(styles.muted);
   if (n.includes("number") || n.includes("docket") || n.includes("value") || n.includes("amount")) result.push(styles.emphasis);
   if (n.includes("status") || n.includes("badge")) result.push(styles.badgeText);
+  if (n.includes("date-day")) result.push(styles.dateDay);
+  if (n.includes("date-month")) result.push(styles.dateMonth);
   return result;
 };
 
@@ -97,6 +99,8 @@ const styles = StyleSheet.create({
   paragraph: {fontSize: 15, lineHeight: 21, color: "#60758E"},
   label: {fontSize: 10, lineHeight: 14, fontWeight: "700", color: "#718197", letterSpacing: 0.5, marginBottom: 6},
   muted: {fontSize: 11, lineHeight: 16, color: "#718197"},
+  dateDay: {fontSize: 20, lineHeight: 24, fontWeight: "700", color: "#19324D", textAlign: "center"},
+  dateMonth: {fontSize: 10, lineHeight: 13, fontWeight: "700", color: "#718197", textAlign: "center", textTransform: "uppercase"},
   emphasis: {fontWeight: "700", color: "#246BE3"},
   badge: {alignSelf: "flex-start", minHeight: 28, borderRadius: 15, backgroundColor: "#E1EAF8", paddingHorizontal: 11, paddingVertical: 6},
   badgeText: {fontSize: 10, lineHeight: 14, fontWeight: "700", color: "#2864B5"},

@@ -17,8 +17,10 @@ import {
 } from "../../../services/api/clientNotificationsService";
 import { getApiErrorMessage } from "../../../services/api/authService";
 import { SidebarMenuButton } from "../../../components/navigation/RoleSidebar";
+import { useNavigation } from "@react-navigation/native";
 
 const ClientNotificationsScreen = () => {
+  const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
@@ -122,6 +124,13 @@ const ClientNotificationsScreen = () => {
 
   const handleNotificationClick = (notification) => {
     if (notification.status === "Unread") handleMarkAsRead(notification);
+    if (notification.type === "Case" && notification.caseId) {
+      navigation.navigate("ClientCaseDetails", { caseId: notification.caseId });
+    } else if (notification.type === "Hearing" && notification.caseId) {
+      navigation.navigate("ClientHearingSchedule", { caseId: notification.caseId });
+    } else if (notification.type === "Document" && notification.caseId) {
+      navigation.navigate("ClientDocuments", { caseId: notification.caseId });
+    }
   };
 
   const handleMarkAsRead = async (notification) => {

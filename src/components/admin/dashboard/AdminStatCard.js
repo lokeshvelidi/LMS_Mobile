@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 import {
   StyleSheet,
@@ -36,15 +37,7 @@ const AdminStatCard = ({
           },
         ]}
       >
-        <AppText
-          size="md"
-          weight="bold"
-          style={{
-            color: accent,
-          }}
-        >
-          {icon}
-        </AppText>
+        <Ionicons name={icon} size={22} color={accent} />
       </View>
 
       <AppText

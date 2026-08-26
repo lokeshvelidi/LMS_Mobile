@@ -289,15 +289,9 @@ const HearingDeskScreen = ({
             hearings by date.
           </AppText>
 
-          <View
+          <Pressable
             style={styles.calendarButton}
-            onTouchEnd={() =>
-              navigation
-                ?.getParent()
-                ?.navigate(
-                  "HearingCalendar"
-                )
-            }
+            onPress={() => navigation.navigate("HearingCalendar")}
           >
             <AppText
               size="sm"
@@ -308,7 +302,7 @@ const HearingDeskScreen = ({
             >
               Open Hearing Calendar
             </AppText>
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.bottomSpace} />

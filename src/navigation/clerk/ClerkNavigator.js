@@ -10,6 +10,8 @@ import ClerkReportsScreen from "../../screens/clerk/reports/ClerkReportsScreen";
 import ClerkDocumentsScreen from "../../screens/clerk/documents/DocumentsScreen";
 import EditClerkProfileScreen from "../../screens/clerk/profile/EditClerkProfileScreen";
 import ChangeClerkPasswordScreen from "../../screens/clerk/profile/ChangeClerkPasswordScreen";
+import AddClientScreen from "../../screens/admin/clients/AddClientScreen";
+import AddCaseScreen from "../../screens/admin/cases/AddCaseScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +53,8 @@ const ClerkNavigator = () => {
       />
       <Stack.Screen name="EditClerkProfile" component={EditClerkProfileScreen} />
       <Stack.Screen name="ChangeClerkPassword" component={ChangeClerkPasswordScreen} />
+      <Stack.Screen name="ClerkAddClient" component={AddClientScreen} />
+      <Stack.Screen name="ClerkAddCase" component={AddCaseScreen} />
     </Stack.Navigator>
   );
 };

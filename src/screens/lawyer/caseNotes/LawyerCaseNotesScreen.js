@@ -1,10 +1,8 @@
-import React, {
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Alert,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -19,6 +17,7 @@ import AssignedCaseSelector from "../../../components/lawyer/caseNotes/AssignedC
 import SelectedCaseInfo from "../../../components/lawyer/caseNotes/SelectedCaseInfo";
 
 import CaseNotesInput from "../../../components/lawyer/caseNotes/CaseNotesInput";
+import { getLawyerCases } from "../../../services/api/lawyerService";
 
 const COLORS = {
   background: "#F3F0E8",
@@ -33,65 +32,30 @@ const LawyerCaseNotesScreen = ({
   navigation,
   route,
 }) => {
-  const cases = useMemo(
-    () => [
-      {
-        caseNumber: "CIV-2026-004",
-        client: "Vijay Kumar",
-        type: "Civil",
-        court: "Civil Court Hyderabad",
-        stage: "Written Statement",
-        status: "In Progress",
-        priority: "Low",
-        nextHearing: "12 Aug 2026",
-      },
-
-      {
-        caseNumber: "LC-2026-102",
-        client: "test",
-        type: "Criminal",
-        court: "Criminal Court Nampally",
-        stage: "Stage not set",
-        status: "New",
-        priority: "Medium",
-        nextHearing: "05 Aug 2026",
-      },
-
-      {
-        caseNumber: "CIV-2026-001",
-        client: "Ramesh Kumar",
-        type: "Civil",
-        court: "Civil Court Hyderabad",
-        stage: "Evidence",
-        status: "In Progress",
-        priority: "High",
-        nextHearing: "25 Jul 2026",
-      },
-    ],
-    []
-  );
+  const [cases, setCases] = useState([]);
+  useEffect(() => {
+    getLawyerCases()
+      .then((items) => {
+        setCases(items);
+        setSelectedCase((current) => current ?? route?.params?.caseData ?? items[0] ?? null);
+      })
+      .catch((e) => Alert.alert("Cases unavailable", e.message));
+  }, [route?.params?.caseData]);
 
   const initialCase =
     route?.params?.caseData ||
-    cases[0];
+    cases[0] || null;
 
   const [selectedCase, setSelectedCase] =
     useState(initialCase);
 
   const [notes, setNotes] =
-    useState(
-      "Money recovery case"
-    );
+    useState("");
 
   const handleSelectCase = (item) => {
     setSelectedCase(item);
 
-    setNotes(
-      item.caseNumber ===
-        "CIV-2026-004"
-        ? "Money recovery case"
-        : ""
-    );
+    setNotes("");
   };
 
   const handleSave = () => {
@@ -180,9 +144,9 @@ const LawyerCaseNotesScreen = ({
         {/* Save */}
 
         <View style={styles.saveContainer}>
-          <View
+          <Pressable
             style={styles.saveButton}
-            onTouchEnd={handleSave}
+            onPress={handleSave}
           >
             <AppText
               size="sm"
@@ -191,13 +155,11 @@ const LawyerCaseNotesScreen = ({
             >
               Save Case Notes
             </AppText>
-          </View>
+          </Pressable>
 
-          <View
+          <Pressable
             style={styles.detailsButton}
-            onTouchEnd={
-              handleOpenDetails
-            }
+            onPress={handleOpenDetails}
           >
             <AppText
               size="sm"
@@ -208,7 +170,7 @@ const LawyerCaseNotesScreen = ({
             >
               Open Case Details
             </AppText>
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.bottomSpace} />

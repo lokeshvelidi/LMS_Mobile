@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import {
   Alert,
@@ -51,6 +52,7 @@ const AddHearingScreen = ({
 
   const [date, setDate] =
     useState(existing?.hearingDate || "");
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [time, setTime] =
     useState(existing?.time || "");
@@ -149,12 +151,13 @@ const AddHearingScreen = ({
             placeholder="Enter client name"
           />
 
-          <Field
-            label="Date"
-            value={date}
-            onChangeText={setDate}
-            placeholder="DD MMM YYYY"
-          />
+          <View style={styles.field}>
+            <AppText size="sm" weight="semiBold" style={styles.label}>Date</AppText>
+            <Pressable onPress={() => setShowDatePicker(true)} style={styles.input}>
+              <AppText color={date ? "textPrimary" : "textSecondary"}>{date || "Select hearing date"}</AppText>
+            </Pressable>
+            {showDatePicker ? <DateTimePicker value={date && !Number.isNaN(new Date(date).getTime()) ? new Date(date) : new Date()} mode="date" onChange={(event, value) => { setShowDatePicker(false); if (value) setDate(value.toISOString().slice(0, 10)); }} /> : null}
+          </View>
 
           <AppText size="xs" color="textSecondary">The backend Hearing DTO provides hearingDate; separate time/duration fields are not submitted.</AppText>
 

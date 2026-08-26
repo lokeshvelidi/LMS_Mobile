@@ -77,7 +77,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Total Clients"
               value={value("totalClients", "clientsCount")}
-              icon="C"
+              icon="people-outline"
               accent={COLORS.blue}
               description="Registered clients"
               onPress={() => navigation.navigate("Clients")}
@@ -86,7 +86,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Civil Cases"
               value={caseTypeValue("civil")}
-              icon="⚖"
+              icon="briefcase-outline"
               accent={COLORS.gold}
               description="Active civil cases"
               onPress={() => navigation.navigate("Cases")}
@@ -95,7 +95,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Criminal Cases"
               value={caseTypeValue("criminal")}
-              icon="§"
+              icon="shield-checkmark-outline"
               accent={COLORS.red}
               description="Active criminal cases"
               onPress={() => navigation.navigate("Cases")}
@@ -104,7 +104,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Today's Hearings"
               value={value("todayHearings", "todaysHearings")}
-              icon="D"
+              icon="calendar-outline"
               accent={COLORS.green}
               description="Scheduled today"
               onPress={() => navigation.navigate("Hearings")}
@@ -113,7 +113,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Pending Cases"
               value={value("pendingCases", "pendingCaseCount")}
-              icon="P"
+              icon="time-outline"
               accent={COLORS.gold}
               description="Awaiting action"
               onPress={() => navigation.navigate("Cases")}
@@ -122,7 +122,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Closed Cases"
               value={value("closedCases", "closedCaseCount")}
-              icon="✓"
+              icon="checkmark-circle-outline"
               accent={COLORS.green}
               description="Successfully closed"
               onPress={() => navigation.navigate("Cases")}
@@ -131,7 +131,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Upcoming Hearings"
               value={value("upcomingHearings", "upcomingHearingCount")}
-              icon="H"
+              icon="calendar-number-outline"
               accent={COLORS.blue}
               description="Upcoming schedule"
               onPress={() => navigation.navigate("Hearings")}
@@ -140,7 +140,7 @@ const AdminDashboardScreen = ({
             <AdminStatCard
               title="Pending Payments"
               value={value("pendingPayments", "pendingPaymentAmount")}
-              icon="₹"
+              icon="card-outline"
               accent={COLORS.red}
               description="Outstanding amount"
               onPress={() => navigation.navigate("Reports")}

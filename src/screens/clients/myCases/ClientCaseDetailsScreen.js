@@ -100,7 +100,12 @@ const ClientCaseDetailsScreen = ({ navigation, route }) => {
                 style={[styles.timelineItem, index < caseDetails.timeline.length - 1 && styles.rowBorder]}
               >
                 <View style={styles.timelineTop}>
-                  <Text style={styles.timelineTitle}>{event.title}</Text>
+                <Pressable style={styles.timelineLink} onPress={() => {
+                  const type = String(event.type || "").toLowerCase();
+                  if (type.includes("document")) navigation.navigate("ClientDocuments", { caseId });
+                  else if (type.includes("hearing")) navigation.navigate("ClientHearingSchedule", { caseId });
+                  else navigation.navigate("ClientCaseDetails", { caseId });
+                }}><Text style={styles.timelineTitle}>{event.title}</Text></Pressable>
                   <Text style={styles.timelineType}>{event.type}</Text>
                 </View>
                 <Text style={styles.timelineDate}>{event.date}</Text>
@@ -169,6 +174,7 @@ const styles = StyleSheet.create({
   timelineItem: { paddingVertical: 14 },
   timelineTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12 },
   timelineTitle: { flex: 1, fontSize: 15, fontWeight: "700", color: "#263A50" },
+  timelineLink: { flex: 1 },
   timelineType: { fontSize: 11, fontWeight: "700", color: "#654CC4" },
   timelineDate: { marginTop: 5, fontSize: 12, color: "#71839A" },
   timelineDescription: { marginTop: 5, fontSize: 13, lineHeight: 19, color: "#435971" },

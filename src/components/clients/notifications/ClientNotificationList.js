@@ -22,7 +22,7 @@ const ClientNotificationList = ({
         <ClientNotificationCard
           key={notification.id}
           notification={notification}
-          onNotificationPress={onNotificationClick}
+          onNotificationClick={onNotificationClick}
           onMarkAsRead={onMarkAsRead}
         />
       ))}

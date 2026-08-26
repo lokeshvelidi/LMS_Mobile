@@ -1,9 +1,11 @@
 import React from "react";
+import { Pressable } from "react-native";
 import * as Native from "../ClientNativeElements";
 
 const ClientTimelineCard = ({ caseItem, onOpenCase }) => {
   return (
-    <Native.Div nativeClass="client-timeline-card">
+    <Pressable onPress={() => onOpenCase(caseItem)}>
+      <Native.Div nativeClass="client-timeline-card">
       <Native.Div nativeClass="client-timeline-card-header">
         <Native.Div>
           <Native.Div nativeClass="client-timeline-card-docket">
@@ -69,7 +71,8 @@ const ClientTimelineCard = ({ caseItem, onOpenCase }) => {
           </Native.Div>
         </Native.Div>
       </Native.Div>
-    </Native.Div>
+      </Native.Div>
+    </Pressable>
   );
 };
 

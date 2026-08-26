@@ -14,6 +14,7 @@ import AppHeader from "../../../components/layout/AppHeader";
 import AppText from "../../../components/common/AppText";
 import { createAdminCase } from "../../../services/api/adminCasesService";
 import { getAdminAdvocates, getAdminClients, getAdminCourts, getAdminMasterValues } from "../../../services/api/adminReferenceService";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const COLORS = {
   background: "#F5F2EA",
@@ -46,6 +47,7 @@ const AddCaseScreen = ({
 
   const [nextHearing, setNextHearing] =
     useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [type, setType] =
     useState("Civil");
@@ -78,7 +80,7 @@ const AddCaseScreen = ({
     }
 
     setSubmitting(true);
-    createAdminCase({ caseNumber, caseType: type, clientId: Number(clientId), advocateId: advocateId ? Number(advocateId) : undefined, courtId: courtId ? Number(courtId) : undefined, caseStage: stage || undefined, priority, nextHearingDate: nextHearing || undefined })
+    createAdminCase({ caseNumber: caseNumber.trim(), caseType: type, clientId: Number(clientId), advocateId: advocateId ? Number(advocateId) : undefined, courtId: courtId ? Number(courtId) : undefined, caseStage: stage || undefined, priority, nextHearingDate: nextHearing || undefined })
       .then(() => Alert.alert("Case Created", "The case has been created successfully.", [{ text: "OK", onPress: () => navigation.goBack() }]))
       .catch((e) => Alert.alert("Create failed", e.response?.data?.message || "Unable to create case."))
       .finally(() => setSubmitting(false));
@@ -116,6 +118,10 @@ const AddCaseScreen = ({
             placeholder="Enter case number"
             autoCapitalize="characters"
           />
+          <Pressable onPress={() => setShowDatePicker(true)} style={styles.input}>
+            <AppText color={nextHearing ? "textPrimary" : "textSecondary"}>{nextHearing || "Select hearing date"}</AppText>
+          </Pressable>
+          {showDatePicker ? <DateTimePicker value={new Date()} mode="date" onChange={(event, date) => { setShowDatePicker(false); if (date) setNextHearing(date.toISOString().slice(0, 10)); }} /> : null}
 
           <OptionGroup label="Stage" values={stages} selected={stage} onSelect={setStage} />
 

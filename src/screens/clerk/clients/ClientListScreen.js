@@ -100,11 +100,7 @@ const ClientListScreen = ({navigation}) => {
   }, [search, sortOrder, rows, clients]);
 
   const handleAddClient = () => {
-    // Navigation will be connected later
-    // when the Add Client screen is created.
-    if (navigation) {
-      // navigation.navigate('AddClient');
-    }
+    navigation.navigate('ClerkAddClient');
   };
 
   const handleEditClient = client => {

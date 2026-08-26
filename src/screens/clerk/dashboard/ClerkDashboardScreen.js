@@ -7,6 +7,7 @@ import {
   Dimensions,
   Pressable,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import {getClerkDashboard} from '../../../services/api/clerkService';
 import {useNavigation} from '@react-navigation/native';
 
@@ -29,6 +30,7 @@ const getAccentColor = type => {
 };
 
 const StatCard = ({ title, value, type, onPress }) => {
+  const icon = { blue: 'people-outline', green: 'briefcase-outline', yellow: 'calendar-outline', red: 'alert-circle-outline' }[type] || 'stats-chart-outline';
   return (
     <Pressable
       onPress={onPress}
@@ -39,7 +41,7 @@ const StatCard = ({ title, value, type, onPress }) => {
         },
       ]}
     >
-      <Text style={styles.statTitle}>{title}</Text>
+      <View style={styles.statHeading}><Ionicons name={icon} size={16} color={getAccentColor(type)} /><Text style={styles.statTitle}>{title}</Text></View>
 
       <Text
         style={[
@@ -97,10 +99,10 @@ const CaseStatusChart = ({items}) => {
       </View>
 
       <View style={styles.legend}>
-        {items.map(item => (
+        {items.map((item, index) => (
           <View
             style={styles.legendItem}
-            key={item.label}
+            key={`${item.label}-${index}`}
           >
             <View
               style={[
@@ -132,7 +134,7 @@ const BillingChart = ({items}) => {
         <View style={styles.yAxis} />
 
         <View style={styles.barsContainer}>
-          {items.map(item => {
+          {items.map((item, index) => {
             const numericValue = item.value;
             const height =
               (numericValue / maxValue) * 300;
@@ -140,7 +142,7 @@ const BillingChart = ({items}) => {
             return (
               <View
                 style={styles.barColumn}
-                key={item.label}
+                key={`${item.label}-${index}`}
               >
                 <View
                   style={[
@@ -214,9 +216,9 @@ const ClerkDashboardScreen = () => {
 
         {/* Statistics */}
         <View style={styles.statsContainer}>
-          {dashboardStats.map(item => (
+          {dashboardStats.map((item, index) => (
             <StatCard
-              key={item.title}
+              key={`${item.title}-${index}`}
               title={item.title}
               value={item.value}
               type={item.type}
@@ -304,6 +306,13 @@ const styles = StyleSheet.create({
     color: '#63758B',
     letterSpacing: 1,
     marginBottom: 12,
+  },
+
+  statHeading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 0,
   },
 
   statValue: {

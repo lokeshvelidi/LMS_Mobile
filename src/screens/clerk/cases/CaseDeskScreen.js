@@ -198,8 +198,7 @@ const CaseDeskScreen = ({navigation}) => {
   };
 
   const handleNewCase = () => {
-    // Add New Case screen will be connected later.
-    console.log('New Case');
+    navigation.navigate('ClerkAddCase');
   };
 
   const handleEdit = item => {

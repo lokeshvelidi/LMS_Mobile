@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 
 import {
+  Alert,
   View,
   Text,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import PaymentSummaryCard from '../../../components/clerk/paymentDesk/PaymentSummaryCard';
 
@@ -105,6 +107,7 @@ const PaymentDeskScreen = () => {
 
   const [toDate, setToDate] =
     useState('');
+  const [datePicker, setDatePicker] = useState(null);
 
   const [rows, setRows] =
     useState(10);
@@ -286,12 +289,13 @@ const PaymentDeskScreen = () => {
               </Text>
             </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
               style={[
                 styles.dateBox,
                 isMobile &&
                   styles.mobileField,
-              ]}>
+              ]}
+              onPress={() => setDatePicker('to')}>
               <TextInput
                 value={fromDate}
                 onChangeText={setFromDate}
@@ -304,14 +308,15 @@ const PaymentDeskScreen = () => {
                 style={styles.calendarIcon}>
                 ▣
               </Text>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
               style={[
                 styles.dateBox,
                 isMobile &&
                   styles.mobileField,
-              ]}>
+              ]}
+              onPress={() => setDatePicker('to')}>
               <TextInput
                 value={toDate}
                 onChangeText={setToDate}
@@ -324,7 +329,9 @@ const PaymentDeskScreen = () => {
                 style={styles.calendarIcon}>
                 ▣
               </Text>
-            </View>
+            </TouchableOpacity>
+
+            {datePicker ? <DateTimePicker value={new Date()} mode="date" onChange={(event, date) => { setDatePicker(null); if (date) (datePicker === 'from' ? setFromDate : setToDate)(date.toISOString().slice(0, 10)); }} /> : null}
 
             <TouchableOpacity
               activeOpacity={0.8}
@@ -347,11 +354,7 @@ const PaymentDeskScreen = () => {
             <TouchableOpacity
               activeOpacity={0.85}
               style={styles.invoiceButton}
-              onPress={() =>
-                console.log(
-                  'Create invoice',
-                )
-              }>
+              onPress={() => Alert.alert('New Invoice', 'Invoice creation is not available because no confirmed invoice-create endpoint is exposed by the backend.') }>
               <Text
                 style={
                   styles.invoiceButtonText

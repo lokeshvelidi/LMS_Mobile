@@ -11,7 +11,8 @@ const baseURL = process.env.EXPO_PUBLIC_API_URL || "http://16.16.216.155:5000";
 
 const apiClient = axios.create({
   baseURL,
-  timeout: 30000,
+  // Keep startup and screen transitions responsive when the API is offline or slow.
+  timeout: 12000,
   headers: { Accept: "application/json" },
 });
 
@@ -37,7 +38,7 @@ const refreshStoredSession = async () => {
   const response = await axios.post(
     `${baseURL}${path}`,
     { refreshToken: session.refreshToken },
-    { timeout: 30000, headers: { Accept: "application/json" } }
+    { timeout: 12000, headers: { Accept: "application/json" } }
   );
   const refreshed = parseAuthResponse(response.data, session.realm);
 

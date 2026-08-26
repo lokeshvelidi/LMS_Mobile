@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 const unwrap = (data) => data?.data ?? data;
 const list = (data) => { const x = unwrap(data); return Array.isArray(x) ? x : x?.items ?? x?.data ?? []; };
 export const normalizeAdminHearing = (item) => ({
-  hearingId: item?.hearingId,
+  hearingId: item?.hearingId ?? item?.id,
   caseId: item?.caseId,
   hearingDate: item?.hearingDate ?? null,
   purpose: item?.purpose ?? null,

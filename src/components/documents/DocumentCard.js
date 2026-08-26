@@ -1,4 +1,5 @@
 import React from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Pressable,
   StyleSheet,
@@ -21,7 +22,7 @@ const DocumentCard = ({ document, onPress }) => {
       <AppCard style={styles.card}>
         <View style={styles.row}>
           <View style={styles.fileIcon}>
-            <View style={styles.fileShape} />
+            <MaterialCommunityIcons name="file-document-outline" size={25} color={theme.colors.accent} />
           </View>
 
           <View style={styles.content}>
@@ -38,7 +39,7 @@ const DocumentCard = ({ document, onPress }) => {
               color="textSecondary"
               style={styles.case}
             >
-              {document.caseNumber}
+              {document.caseNumber || ""}
             </AppText>
 
             <AppText
@@ -46,7 +47,7 @@ const DocumentCard = ({ document, onPress }) => {
               color="textTertiary"
               style={styles.date}
             >
-              {document.date} • {document.size}
+              {[document.uploadedDate, document.status, document.version ? `v${document.version}` : null].filter(Boolean).join(" • ")}
             </AppText>
           </View>
 
@@ -79,14 +80,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: theme.spacing.md,
-  },
-
-  fileShape: {
-    width: 19,
-    height: 23,
-    borderWidth: 2,
-    borderColor: theme.colors.accent,
-    borderRadius: 3,
   },
 
   content: {

@@ -1,7 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-} from "react";
+import React, { useState } from "react";
 
 import {
   Alert,
@@ -19,7 +16,7 @@ import ClosureCaseSelector from "../../../components/lawyer/caseClosure/ClosureC
 import ClosureSummary from "../../../components/lawyer/caseClosure/ClosureSummary";
 
 import ClosureForm from "../../../components/lawyer/caseClosure/ClosureForm";
-import { getLawyerCases } from "../../../services/api/lawyerService";
+import { getLawyerCases, updateLawyerCaseStatus } from "../../../services/api/lawyerService";
 
 const COLORS = {
   background: "#F3F0E8",
@@ -32,37 +29,8 @@ const MarkReadyForClosureScreen = ({
 }) => {
   const [cases, setCases] = useState([]);
   React.useEffect(() => { getLawyerCases().then(setCases).catch((e) => Alert.alert("Cases unavailable", e.message)); }, []);
-  const legacyCases = useMemo(
-    () => [
-      {
-        caseNumber: "CIV-2026-004",
-        client: "Vijay Kumar",
-        type: "Civil",
-        stage: "Case Work Completed",
-        status: "Completed",
-      },
-
-      {
-        caseNumber: "LC-2026-102",
-        client: "test",
-        type: "Criminal",
-        stage: "Case Work Completed",
-        status: "Completed",
-      },
-
-      {
-        caseNumber: "CIV-2026-001",
-        client: "Ramesh Kumar",
-        type: "Civil",
-        stage: "Case Work Completed",
-        status: "Completed",
-      },
-    ],
-    []
-  );
-
   const initialCase =
-    route?.params?.caseData || cases[0] || legacyCases[0];
+    route?.params?.caseData || cases[0] || null;
 
   const [
     selectedCase,
@@ -94,10 +62,10 @@ const MarkReadyForClosureScreen = ({
       return;
     }
 
-    Alert.alert(
-      "Ready for Closure",
-      "The case will be submitted for closure after API integration."
-    );
+    if (!selectedCase?.id) return Alert.alert("Ready for Closure", "Select a valid assigned case.");
+    updateLawyerCaseStatus(selectedCase.id, "Ready for Closure")
+      .then(() => Alert.alert("Ready for Closure", "The case status was updated to Ready for Closure."))
+      .catch((e) => Alert.alert("Closure submission failed", e.message || "Unable to submit the case for closure."));
   };
 
   return (

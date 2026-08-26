@@ -32,13 +32,13 @@ export const uploadClientDocument = async ({ caseId, documentType, remarks, file
   form.append("DocumentType", documentType);
   form.append("Remarks", remarks || "");
   form.append("File", { uri: file.uri, name: file.name, type: file.mimeType || "application/octet-stream" });
-  const response = await apiClient.post("/api/client-portal/documents/upload", form);
+  const response = await apiClient.post("/api/client-portal/documents/upload", form, { headers: { "Content-Type": "multipart/form-data" } });
   return response.data;
 };
 
 const downloadAuthenticated = async (path, fileName) => {
   const token = await getAuthToken();
-  const destination = `${FileSystem.cacheDirectory}${fileName}`;
+  const destination = `${FileSystem.documentDirectory}${fileName}`;
   return FileSystem.downloadAsync(`${baseURL}${path}`, destination, {
     headers: { Authorization: `Bearer ${token}` },
   });

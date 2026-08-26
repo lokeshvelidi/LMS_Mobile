@@ -20,7 +20,6 @@ import CasePartiesCard from "../../../components/lawyer/cases/CasePartiesCard";
 
 import CaseTimeline from "../../../components/lawyer/cases/CaseTimeline";
 
-import CaseActionButton from "../../../components/lawyer/cases/CaseActionButton";
 import { getApiErrorMessage } from "../../../services/api/authService";
 import { getLawyerCaseDetail } from "../../../services/api/lawyerService";
 
@@ -53,28 +52,6 @@ const LawyerCaseDetailsScreen = ({
       .finally(() => active && setLoading(false));
     return () => { active = false; };
   }, [initialCase?.id, reloadKey]);
-
-  const handleCaseNotes = () => {
-    navigation
-      ?.getParent()
-      ?.navigate("CaseNotes", {
-        caseData,
-      });
-  };
-
-  const handleHearing = () => {
-    navigation
-      ?.getParent()
-      ?.navigate("HearingDesk");
-  };
-
-  const handleDocuments = () => {
-    navigation
-      ?.getParent()
-      ?.navigate("Documents", {
-        caseData,
-      });
-  };
 
   return (
     <SafeAreaView
@@ -153,40 +130,6 @@ const LawyerCaseDetailsScreen = ({
           caseData={caseData}
         />
 
-        {/* Actions */}
-
-        <View style={styles.actionCard}>
-          <AppText
-            size="md"
-            weight="bold"
-            style={styles.actionTitle}
-          >
-            Case Actions
-          </AppText>
-
-          <CaseActionButton
-            title="Add Case Notes"
-            onPress={handleCaseNotes}
-          />
-
-          <View style={styles.gap} />
-
-          <CaseActionButton
-            title="View Documents"
-            secondary
-            onPress={
-              handleDocuments
-            }
-          />
-
-          <View style={styles.gap} />
-
-          <CaseActionButton
-            title="Open Hearing Desk"
-            secondary
-            onPress={handleHearing}
-          />
-        </View>
         </>) : (
           <View style={styles.stateCard}><AppText size="sm" color="textSecondary">Case details are unavailable.</AppText></View>
         )}
@@ -229,14 +172,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  actionCard: {
-    backgroundColor: "#FFFDF8",
-    borderRadius: 18,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#DED9CE",
-  },
-
   stateCard: {
     minHeight: 160,
     backgroundColor: "#FFFDF8",
@@ -255,15 +190,6 @@ const styles = StyleSheet.create({
   },
 
   retryText: { color: "#FFFFFF" },
-
-  actionTitle: {
-    color: COLORS.navy,
-    marginBottom: 15,
-  },
-
-  gap: {
-    height: 10,
-  },
 
   bottomSpace: {
     height: 25,

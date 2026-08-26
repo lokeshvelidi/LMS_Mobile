@@ -9,6 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   useWindowDimensions,
+  Linking,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { getClientCases } from "../../../services/api/clientCasesService";
@@ -124,14 +125,20 @@ const ClientDocumentsScreen = () => {
     setPage((current) => Math.min(totalPages, current + 1));
   };
 
-  const handleView = (document) => {
-    Alert.alert("Preview unavailable", "This document has no confirmed preview URL and the current app has no in-app document viewer. Use Download to open or save the file.");
+  const handleView = async (document) => {
+    try {
+      const result = await downloadClientDocument(document.id);
+      if (!(await Linking.canOpenURL(result.uri))) throw new Error("No app can open this document.");
+      await Linking.openURL(result.uri);
+    } catch (requestError) {
+      Alert.alert("Unable to open document", getApiErrorMessage(requestError));
+    }
   };
 
   const handleDownload = async (document) => {
     try {
       const result = await downloadClientDocument(document.id);
-      Alert.alert("Download complete", `Saved temporarily to ${result.uri}`);
+      Alert.alert("Download complete", `Document saved to ${result.uri}`);
     } catch (requestError) {
       Alert.alert("Download failed", getApiErrorMessage(requestError));
     }

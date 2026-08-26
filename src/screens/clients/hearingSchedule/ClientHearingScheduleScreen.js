@@ -518,14 +518,14 @@ const styles = StyleSheet.create({
   },
 
   dateDay: {
-    fontSize: 30,
-    lineHeight: 32,
+    fontSize: 22,
+    lineHeight: 26,
     fontWeight: "700",
     color: "#18314E",
   },
 
   dateMonth: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "700",
     color: "#6D5B32",
     marginTop: 2,
